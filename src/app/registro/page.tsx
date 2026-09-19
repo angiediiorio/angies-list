@@ -3,10 +3,11 @@ import Link from "next/link";
 
 import { AuthField } from "@/components/AuthField";
 import { signup } from "@/lib/auth-actions";
+import { BRAND_NAME } from "@/lib/brand";
 import { isSupabaseConfigured } from "@/lib/supabase/is-configured";
 
 export const metadata: Metadata = {
-  title: "Crear cuenta | Angie's List",
+  title: `Crear cuenta | ${BRAND_NAME}`,
 };
 
 type SearchParams = { error?: string; exito?: string };

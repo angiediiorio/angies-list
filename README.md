@@ -1,6 +1,6 @@
-# Angie's List
+# habit·AN·do
 
-MVP de Angie's List: catálogo curado de muebles, decoración, iluminación,
+MVP de habit·AN·do: catálogo curado de muebles, decoración, iluminación,
 revestimientos y grifería. La plataforma no procesa pagos — cada ficha de
 producto redirige al sitio del local de origen para completar la compra.
 
@@ -96,7 +96,7 @@ dashboard de Supabase:
 3. Opcional: **Authentication → Emails → Confirm signup** — reemplazá el
    asunto/cuerpo genérico de Supabase por la plantilla en
    `supabase/email-templates/confirm-signup.html` (con el branding de
-   Angie's List). El remitente sigue siendo el compartido de Supabase salvo
+   habit·AN·do). El remitente sigue siendo el compartido de Supabase salvo
    que se configure SMTP propio en Authentication → Settings → SMTP Settings.
 
 Sin cuenta se puede seguir navegando el catálogo y comprando con

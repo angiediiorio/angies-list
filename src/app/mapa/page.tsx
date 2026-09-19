@@ -2,10 +2,11 @@ import type { Metadata } from "next";
 
 import { LocalesMapLoader } from "@/components/LocalesMapLoader";
 import { getCatalogoRepository } from "@/lib/catalogo";
+import { BRAND_NAME } from "@/lib/brand";
 
 export const metadata: Metadata = {
-  title: "Mapa de locales | Angie's List",
-  description: "Encontrá los locales curados por Angie's List cerca tuyo, filtrados por categoría.",
+  title: `Mapa de locales | ${BRAND_NAME}`,
+  description: `Encontrá los locales curados por ${BRAND_NAME} cerca tuyo, filtrados por categoría.`,
 };
 
 export default async function MapaPage() {

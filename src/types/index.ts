@@ -1,4 +1,4 @@
-// Tipos del dominio de Angie's List.
+// Tipos del dominio de habit·AN·do.
 // Reflejan el modelo de datos del brief técnico (sección 4) y sirven tanto
 // para los datos mock como, más adelante, para las filas de Supabase.
 

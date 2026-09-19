@@ -3,12 +3,13 @@ import type { Metadata } from "next";
 import { CatalogFilters } from "@/components/CatalogFilters";
 import { ProductCard } from "@/components/ProductCard";
 import { getCatalogoRepository } from "@/lib/catalogo";
+import { BRAND_NAME } from "@/lib/brand";
 import { getFavoritoIds } from "@/lib/favoritos";
 import { getCurrentUser } from "@/lib/supabase/current-user";
 import type { CategoriaProducto, FiltrosCatalogo } from "@/types";
 
 export const metadata: Metadata = {
-  title: "Catálogo | Angie's List",
+  title: `Catálogo | ${BRAND_NAME}`,
   description:
     "Buscá y compará muebles, iluminación, decoración, revestimientos y grifería de locales curados.",
 };

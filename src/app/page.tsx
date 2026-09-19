@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { ProductCard } from "@/components/ProductCard";
 import { getCatalogoRepository } from "@/lib/catalogo";
+import { BRAND_EMAIL, BRAND_NAME } from "@/lib/brand";
 import { getFavoritoIds } from "@/lib/favoritos";
 import { getCurrentUser } from "@/lib/supabase/current-user";
 import { CATEGORIAS_PRODUCTO } from "@/types";
@@ -26,7 +27,7 @@ export default async function Home() {
             Equipá tu casa sin saltar entre veinte pestañas
           </h1>
           <p className="max-w-xl text-lg text-zinc-600 dark:text-zinc-400">
-            Angie&apos;s List reúne muebles, decoración, iluminación,
+            {BRAND_NAME} reúne muebles, decoración, iluminación,
             revestimientos y grifería de locales curados en un solo catálogo,
             para que busques, compares y compres en el sitio de cada local con
             un click.
@@ -39,7 +40,7 @@ export default async function Home() {
               Explorar catálogo
             </Link>
             <a
-              href="mailto:hola@angieslist.example.com"
+              href={`mailto:${BRAND_EMAIL}`}
               className="rounded-full border border-black/15 px-6 py-3 text-center text-sm font-semibold text-zinc-800 transition-colors hover:bg-black/5 dark:border-white/20 dark:text-zinc-100 dark:hover:bg-white/10"
             >
               Sumar mi local

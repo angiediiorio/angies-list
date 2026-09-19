@@ -6,6 +6,7 @@ import { notFound } from "next/navigation";
 import { FavoritoButton } from "@/components/FavoritoButton";
 import { ProductCard } from "@/components/ProductCard";
 import { getCatalogoRepository } from "@/lib/catalogo";
+import { BRAND_NAME } from "@/lib/brand";
 import { getFavoritoIds } from "@/lib/favoritos";
 import { formatPrecio } from "@/lib/format";
 import { getCurrentUser } from "@/lib/supabase/current-user";
@@ -21,10 +22,10 @@ export async function generateMetadata({
   const { slug } = await params;
   const producto = await getCatalogoRepository().obtenerProductoPorSlug(slug);
 
-  if (!producto) return { title: "Producto no encontrado | Angie's List" };
+  if (!producto) return { title: `Producto no encontrado | ${BRAND_NAME}` };
 
   return {
-    title: `${producto.nombre} | Angie's List`,
+    title: `${producto.nombre} | ${BRAND_NAME}`,
     description: producto.descripcion,
   };
 }
@@ -140,8 +141,8 @@ export default async function ProductoPage({ params }: ProductoPageProps) {
             Ir a comprar en {producto.local.nombre} ↗
           </a>
           <p className="-mt-3 text-xs text-zinc-500 dark:text-zinc-500">
-            Te redirigimos al sitio del local para completar la compra. Angie&apos;s
-            List no procesa pagos.
+            Te redirigimos al sitio del local para completar la compra.{" "}
+            {BRAND_NAME} no procesa pagos.
           </p>
         </div>
       </div>

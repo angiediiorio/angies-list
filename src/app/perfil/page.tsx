@@ -2,11 +2,12 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 
 import { ProductCard } from "@/components/ProductCard";
+import { BRAND_NAME } from "@/lib/brand";
 import { getFavoritosConProducto } from "@/lib/favoritos";
 import { getCurrentUser } from "@/lib/supabase/current-user";
 
 export const metadata: Metadata = {
-  title: "Mi perfil | Angie's List",
+  title: `Mi perfil | ${BRAND_NAME}`,
 };
 
 export default async function PerfilPage() {

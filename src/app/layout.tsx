@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
+import { BRAND_NAME } from "@/lib/brand";
 
 import "leaflet/dist/leaflet.css";
 import "./globals.css";
@@ -18,7 +19,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Angie's List",
+  title: BRAND_NAME,
   description:
     "Buscá, compará y comprá muebles, decoración, iluminación, revestimientos y grifería curados por una arquitecta especialista en reformas.",
 };

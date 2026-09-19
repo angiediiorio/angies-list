@@ -1,4 +1,4 @@
--- Angie's List — esquema inicial (brief técnico, sección 4)
+-- habit·AN·do — esquema inicial (brief técnico, sección 4)
 -- Pensado para Supabase/Postgres. Correr en el SQL Editor del proyecto.
 
 create extension if not exists "pgcrypto";
