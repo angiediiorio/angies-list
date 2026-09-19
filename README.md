@@ -13,8 +13,10 @@ Stack: Next.js (App Router) + TypeScript + Tailwind CSS + Supabase.
 - ✅ **Ficha de producto** (`/producto/[slug]`): detalle, galería, local de
   origen, botón "Ir a comprar" y sugerencias de productos complementarios.
 - ✅ **Landing** (`/`): propuesta de valor + acceso al catálogo.
-- ⏳ Mapa de locales, favoritos, auth y panel de asesoría: fases siguientes
-  (ver brief técnico, sección 2).
+- ✅ **Mapa de locales** (`/mapa`): pines por local (Leaflet + OpenStreetMap,
+  sin API key), filtrable por categoría.
+- ⏳ Favoritos, auth y panel de asesoría: fases siguientes (ver brief
+  técnico, sección 2).
 
 Ahora mismo el catálogo corre 100% sobre **datos mock** (`src/data/`) para
 poder validar la experiencia sin depender de infraestructura. La capa de

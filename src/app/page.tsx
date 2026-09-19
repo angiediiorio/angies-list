@@ -42,9 +42,17 @@ export default async function Home() {
       </section>
 
       <section className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6">
-        <h2 className="mb-6 text-sm font-medium uppercase tracking-wide text-zinc-500">
-          Categorías
-        </h2>
+        <div className="mb-6 flex items-center justify-between">
+          <h2 className="text-sm font-medium uppercase tracking-wide text-zinc-500">
+            Categorías
+          </h2>
+          <Link
+            href="/mapa"
+            className="text-sm font-medium text-zinc-600 hover:text-zinc-950 dark:text-zinc-400 dark:hover:text-white"
+          >
+            Ver mapa de locales →
+          </Link>
+        </div>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
           {CATEGORIAS_PRODUCTO.map((categoria) => (
             <Link
