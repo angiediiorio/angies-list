@@ -93,6 +93,11 @@ dashboard de Supabase:
    activado (default), un usuario nuevo tiene que confirmar el email antes
    de poder iniciar sesión. Para probar más rápido en desarrollo, se puede
    desactivar.
+3. Opcional: **Authentication → Emails → Confirm signup** — reemplazá el
+   asunto/cuerpo genérico de Supabase por la plantilla en
+   `supabase/email-templates/confirm-signup.html` (con el branding de
+   Angie's List). El remitente sigue siendo el compartido de Supabase salvo
+   que se configure SMTP propio en Authentication → Settings → SMTP Settings.
 
 Sin cuenta se puede seguir navegando el catálogo y comprando con
 normalidad — el login solo es necesario para guardar favoritos
