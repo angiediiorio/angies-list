@@ -2,11 +2,18 @@ import Link from "next/link";
 
 import { ProductCard } from "@/components/ProductCard";
 import { getCatalogoRepository } from "@/lib/catalogo";
+import { getFavoritoIds } from "@/lib/favoritos";
+import { getCurrentUser } from "@/lib/supabase/current-user";
 import { CATEGORIAS_PRODUCTO } from "@/types";
 
 export default async function Home() {
   const repositorio = getCatalogoRepository();
-  const destacados = (await repositorio.listarProductos({})).slice(0, 3);
+  const [todosLosProductos, usuario] = await Promise.all([
+    repositorio.listarProductos({}),
+    getCurrentUser(),
+  ]);
+  const destacados = todosLosProductos.slice(0, 3);
+  const favoritoIds = usuario ? await getFavoritoIds(usuario.id) : new Set<string>();
 
   return (
     <div className="flex flex-1 flex-col">
@@ -81,7 +88,12 @@ export default async function Home() {
           </div>
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
             {destacados.map((producto) => (
-              <ProductCard key={producto.id} producto={producto} />
+              <ProductCard
+                key={producto.id}
+                producto={producto}
+                favorito={favoritoIds.has(producto.id)}
+                logueado={Boolean(usuario)}
+              />
             ))}
           </div>
         </section>

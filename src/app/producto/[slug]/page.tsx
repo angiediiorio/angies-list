@@ -3,9 +3,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { FavoritoButton } from "@/components/FavoritoButton";
 import { ProductCard } from "@/components/ProductCard";
 import { getCatalogoRepository } from "@/lib/catalogo";
+import { getFavoritoIds } from "@/lib/favoritos";
 import { formatPrecio } from "@/lib/format";
+import { getCurrentUser } from "@/lib/supabase/current-user";
 import { CATEGORIAS_PRODUCTO } from "@/types";
 
 interface ProductoPageProps {
@@ -33,9 +36,11 @@ export default async function ProductoPage({ params }: ProductoPageProps) {
 
   if (!producto) notFound();
 
-  const relacionados = await repositorio.listarRelacionados(
-    producto.producto_relacionado_ids,
-  );
+  const [relacionados, usuario] = await Promise.all([
+    repositorio.listarRelacionados(producto.producto_relacionado_ids),
+    getCurrentUser(),
+  ]);
+  const favoritoIds = usuario ? await getFavoritoIds(usuario.id) : new Set<string>();
   const categoriaLabel =
     CATEGORIAS_PRODUCTO.find((c) => c.value === producto.categoria)?.label ??
     producto.categoria;
@@ -83,9 +88,17 @@ export default async function ProductoPage({ params }: ProductoPageProps) {
 
         <div className="flex flex-col gap-6">
           <div>
-            <span className="text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
-              {categoriaLabel}
-            </span>
+            <div className="flex items-start justify-between gap-3">
+              <span className="text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
+                {categoriaLabel}
+              </span>
+              <FavoritoButton
+                productoId={producto.id}
+                favoritoInicial={favoritoIds.has(producto.id)}
+                logueado={Boolean(usuario)}
+                className="border border-black/10 dark:border-white/10"
+              />
+            </div>
             <h1 className="mt-1 text-2xl font-semibold tracking-tight sm:text-3xl">
               {producto.nombre}
             </h1>
@@ -140,7 +153,12 @@ export default async function ProductoPage({ params }: ProductoPageProps) {
           </h2>
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {relacionados.map((r) => (
-              <ProductCard key={r.id} producto={r} />
+              <ProductCard
+                key={r.id}
+                producto={r}
+                favorito={favoritoIds.has(r.id)}
+                logueado={Boolean(usuario)}
+              />
             ))}
           </div>
         </section>

@@ -3,6 +3,8 @@ import type { Metadata } from "next";
 import { CatalogFilters } from "@/components/CatalogFilters";
 import { ProductCard } from "@/components/ProductCard";
 import { getCatalogoRepository } from "@/lib/catalogo";
+import { getFavoritoIds } from "@/lib/favoritos";
+import { getCurrentUser } from "@/lib/supabase/current-user";
 import type { CategoriaProducto, FiltrosCatalogo } from "@/types";
 
 export const metadata: Metadata = {
@@ -47,10 +49,12 @@ export default async function CatalogoPage({
   const filtros = parseFiltros(resolvedSearchParams);
   const repositorio = getCatalogoRepository();
 
-  const [productos, opciones] = await Promise.all([
+  const [productos, opciones, usuario] = await Promise.all([
     repositorio.listarProductos(filtros),
     repositorio.obtenerOpcionesFiltro(),
+    getCurrentUser(),
   ]);
+  const favoritoIds = usuario ? await getFavoritoIds(usuario.id) : new Set<string>();
 
   return (
     <div className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6">
@@ -75,7 +79,12 @@ export default async function CatalogoPage({
           ) : (
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {productos.map((producto) => (
-                <ProductCard key={producto.id} producto={producto} />
+                <ProductCard
+                  key={producto.id}
+                  producto={producto}
+                  favorito={favoritoIds.has(producto.id)}
+                  logueado={Boolean(usuario)}
+                />
               ))}
             </div>
           )}

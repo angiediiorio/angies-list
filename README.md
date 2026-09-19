@@ -15,8 +15,10 @@ Stack: Next.js (App Router) + TypeScript + Tailwind CSS + Supabase.
 - ✅ **Landing** (`/`): propuesta de valor + acceso al catálogo.
 - ✅ **Mapa de locales** (`/mapa`): pines por local (Leaflet + OpenStreetMap,
   sin API key), filtrable por categoría.
-- ⏳ Favoritos, auth y panel de asesoría: fases siguientes (ver brief
-  técnico, sección 2).
+- ✅ **Registro/login + Favoritos**: cuenta opcional (Supabase Auth, email +
+  contraseña) que no bloquea navegar ni comprar; con cuenta se pueden
+  guardar productos en `/perfil`.
+- ⏳ Panel de asesoría y fase 2 completa: ver brief técnico, sección 2.
 
 Ahora mismo el catálogo corre 100% sobre **datos mock** (`src/data/`) para
 poder validar la experiencia sin depender de infraestructura. La capa de
@@ -77,8 +79,27 @@ un cambio de configuración, no de código.
 Con `DATA_SOURCE=mock` (o sin `.env.local`) el proyecto sigue funcionando
 igual que hoy, con los datos de `src/data/`.
 
+## Registro/login + Favoritos (Supabase Auth)
+
+Usa las mismas credenciales que "Conectar Supabase" de arriba — no hace
+falta nada adicional en `.env.local`. Dos cosas para configurar en el
+dashboard de Supabase:
+
+1. **Authentication → URL Configuration → Redirect URLs**: agregá
+   `http://localhost:3000/auth/callback` (para desarrollo local) y
+   `https://<tu-dominio-de-vercel>/auth/callback` (para producción). Sin
+   esto, el link de confirmación de email no va a poder volver a la app.
+2. **Authentication → Providers → Email → Confirm email**: si lo dejás
+   activado (default), un usuario nuevo tiene que confirmar el email antes
+   de poder iniciar sesión. Para probar más rápido en desarrollo, se puede
+   desactivar.
+
+Sin cuenta se puede seguir navegando el catálogo y comprando con
+normalidad — el login solo es necesario para guardar favoritos
+(`/perfil`). Sin las credenciales de Supabase configuradas, `/login` y
+`/registro` muestran un aviso en vez de romperse.
+
 ## Próximos pasos sugeridos
 
-Ver brief técnico, sección 7: validar con usuarios/locales piloto, sumar
-mapa de locales, favoritos (requiere Supabase Auth) y filtros más finos a
-medida que crezca el catálogo real.
+Ver brief técnico, sección 7: validar con usuarios/locales piloto, cargar
+locales/productos reales, y avanzar con el panel de asesoría (fase 2).

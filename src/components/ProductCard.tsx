@@ -1,15 +1,28 @@
 import Image from "next/image";
 import Link from "next/link";
 
+import { FavoritoButton } from "@/components/FavoritoButton";
 import { formatPrecio } from "@/lib/format";
 import type { ProductoConLocal } from "@/types";
 
-export function ProductCard({ producto }: { producto: ProductoConLocal }) {
+interface ProductCardProps {
+  producto: ProductoConLocal;
+  favorito?: boolean;
+  logueado?: boolean;
+}
+
+export function ProductCard({ producto, favorito = false, logueado = false }: ProductCardProps) {
   return (
-    <Link
-      href={`/producto/${producto.slug}`}
-      className="group flex flex-col overflow-hidden rounded-2xl border border-black/10 bg-white transition-shadow hover:shadow-lg dark:border-white/10 dark:bg-zinc-950"
-    >
+    <div className="group relative flex flex-col overflow-hidden rounded-2xl border border-black/10 bg-white transition-shadow hover:shadow-lg dark:border-white/10 dark:bg-zinc-950">
+      {/* Link "estirado": cubre toda la card para que sea clickeable, pero
+          vive al lado (no adentro) del botón de favorito para no anidar
+          elementos interactivos. */}
+      <Link
+        href={`/producto/${producto.slug}`}
+        aria-label={producto.nombre}
+        className="absolute inset-0 z-0"
+      />
+
       <div className="relative aspect-[4/3] w-full overflow-hidden bg-zinc-100 dark:bg-zinc-900">
         <Image
           src={producto.imagenes[0]}
@@ -19,12 +32,18 @@ export function ProductCard({ producto }: { producto: ProductoConLocal }) {
           className="object-cover transition-transform duration-300 group-hover:scale-105"
         />
         {!producto.stock && (
-          <span className="absolute left-3 top-3 rounded-full bg-black/80 px-2.5 py-1 text-xs font-medium text-white">
+          <span className="absolute left-3 top-3 z-10 rounded-full bg-black/80 px-2.5 py-1 text-xs font-medium text-white">
             Sin stock
           </span>
         )}
+        <FavoritoButton
+          productoId={producto.id}
+          favoritoInicial={favorito}
+          logueado={logueado}
+          className="absolute right-3 top-3 z-10"
+        />
       </div>
-      <div className="flex flex-1 flex-col gap-1 p-4">
+      <div className="pointer-events-none relative z-0 flex flex-1 flex-col gap-1 p-4">
         <span className="text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
           {producto.local.nombre}
         </span>
@@ -35,6 +54,6 @@ export function ProductCard({ producto }: { producto: ProductoConLocal }) {
           {formatPrecio(producto.precio, producto.moneda)}
         </p>
       </div>
-    </Link>
+    </div>
   );
 }
