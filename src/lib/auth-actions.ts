@@ -40,7 +40,7 @@ export async function signup(formData: FormData) {
   const supabase = await createClient();
   const siteUrl = await getSiteUrl();
 
-  const { error } = await supabase.auth.signUp({
+  const { data, error } = await supabase.auth.signUp({
     email,
     password,
     options: {
@@ -50,6 +50,14 @@ export async function signup(formData: FormData) {
 
   if (error) {
     redirect(`/registro?error=${encodeURIComponent(error.message)}`);
+  }
+
+  // Si el proyecto de Supabase no exige confirmar el email (o ya estaba
+  // confirmado), signUp devuelve una sesión válida de una: entramos
+  // directo en vez de mandar a "revisá tu email" sin necesidad.
+  if (data.session) {
+    revalidatePath("/", "layout");
+    redirect("/perfil");
   }
 
   redirect("/registro?exito=1");
