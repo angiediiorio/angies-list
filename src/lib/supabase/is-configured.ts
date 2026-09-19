@@ -7,3 +7,9 @@ export function isSupabaseConfigured(): boolean {
     process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
   );
 }
+
+/** El panel de admin (aprobar/rechazar estudios) además necesita la
+ * Service Role Key para poder invitar usuarios y saltarse RLS. */
+export function isAdminConfigured(): boolean {
+  return isSupabaseConfigured() && Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY);
+}

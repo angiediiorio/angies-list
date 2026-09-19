@@ -18,6 +18,9 @@ Stack: Next.js (App Router) + TypeScript + Tailwind CSS + Supabase.
 - ✅ **Registro/login + Favoritos**: cuenta opcional (Supabase Auth, email +
   contraseña) que no bloquea navegar ni comprar; con cuenta se pueden
   guardar productos en `/perfil`.
+- ✅ **Sección B2B para estudios** (`/para-estudios`): solicitud de acceso
+  con aprobación manual, panel de admin y rutas premium protegidas — ver
+  "Sección B2B" más abajo.
 - ⏳ Panel de asesoría y fase 2 completa: ver brief técnico, sección 2.
 
 Ahora mismo el catálogo corre 100% sobre **datos mock** (`src/data/`) para
@@ -93,6 +96,7 @@ dashboard de Supabase:
    activado (default), un usuario nuevo tiene que confirmar el email antes
    de poder iniciar sesión. Para probar más rápido en desarrollo, se puede
    desactivar.
+
 Sin cuenta se puede seguir navegando el catálogo y comprando con
 normalidad — el login solo es necesario para guardar favoritos
 (`/perfil`). Sin las credenciales de Supabase configuradas, `/login` y
@@ -119,6 +123,50 @@ Para personalizarlo hace falta:
 
 Hasta que se configure, el flujo funciona igual (el código ya contempla
 ambos casos) — solo cambia el diseño del mail que reciben los usuarios.
+
+## Sección B2B para estudios
+
+Flujo completo: `/para-estudios` (landing pública) → `/para-estudios/solicitar`
+(formulario) → queda en `solicitudes_estudio` con estado `pendiente`, **sin
+crear ninguna cuenta todavía** (así nadie puede loguearse hasta ser
+aprobado) → admin la revisa en `/admin/estudios` → al aprobar, se crea la
+cuenta real (invitación de Supabase) y se le manda un mail con el link para
+que elija contraseña en `/activar-cuenta` → una vez logueada, esa cuenta
+tiene `tipo_cuenta='estudio'` y `estado_verificacion='aprobado'` y puede
+entrar a las secciones premium (`/estudios`, hoy con contenido de ejemplo:
+precios mayoristas, specs ampliadas y export a PDF quedan para una próxima
+iteración — lo que ya funciona de punta a punta es el control de acceso).
+
+### Setup
+
+1. Corré `supabase/schema-b2b.sql` en el SQL Editor (después de
+   `schema.sql`). Crea `perfiles` (extiende cada usuario con
+   `tipo_cuenta`/`estado_verificacion`) y `solicitudes_estudio`, más un
+   trigger que le da `tipo_cuenta='cliente_final'` a cualquier cuenta
+   nueva automáticamente.
+2. En `.env.local` (y en Vercel → Settings → Environment Variables),
+   agregá:
+   - `SUPABASE_SERVICE_ROLE_KEY`: Project Settings → API → `service_role`
+     (o `secret` en el sistema nuevo de keys). **Nunca** con prefijo
+     `NEXT_PUBLIC_` — solo se usa en Server Actions.
+   - `ADMIN_EMAILS`: tu email de Supabase Auth (el que usás para loguearte
+     en `/login`). Separá con comas si hay más de un admin.
+3. En **Authentication → URL Configuration → Redirect URLs**, agregá
+   también `<tu-dominio>/auth/callback?next=/activar-cuenta` (o dejá el
+   comodín que ya hayas cargado para `/auth/callback` — alcanza con que
+   cubra ese path).
+
+### Cómo probarlo
+
+1. Andá a `/para-estudios/solicitar` y mandá una solicitud de prueba.
+2. Entrá a `/admin/estudios` logueada con un email que esté en
+   `ADMIN_EMAILS` — vas a ver la solicitud en "Pendientes".
+3. Apretá "Aprobar": se crea la cuenta y sale el mail de invitación
+   (plantilla genérica de Supabase, mismo tema del SMTP que en Registro).
+4. Desde ese mail, el link te loguea y te manda a `/activar-cuenta` para
+   poner contraseña. Después de eso, `/estudios` ya es visible.
+5. Probá también entrar a `/estudios` con una cuenta normal (`cliente_final`)
+   — te tiene que mandar a `/para-estudios`.
 
 ## Próximos pasos sugeridos
 

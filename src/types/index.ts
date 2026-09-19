@@ -63,3 +63,33 @@ export interface FiltrosCatalogo {
   precioMax?: number;
   q?: string;
 }
+
+// --- B2B: estudios de arquitectura/diseño ---
+
+export type TipoCuenta = "cliente_final" | "estudio";
+export type EstadoVerificacion = "pendiente" | "aprobado" | "rechazado";
+
+/** Extiende auth.users (ver supabase/schema-b2b.sql). Todo usuario tiene
+ * una fila acá, creada automáticamente por un trigger al registrarse. */
+export interface Perfil {
+  id: string;
+  tipo_cuenta: TipoCuenta;
+  estado_verificacion: EstadoVerificacion | null;
+  nombre_estudio: string | null;
+  cuit_matricula: string | null;
+  sitio_web_instagram: string | null;
+}
+
+/** Solicitud de acceso B2B enviada desde /para-estudios/solicitar, antes
+ * de que exista una cuenta (se crea recién al aprobarse). */
+export interface SolicitudEstudio {
+  id: string;
+  nombre_estudio: string;
+  cuit_matricula: string;
+  email: string;
+  sitio_web_instagram: string | null;
+  estado: EstadoVerificacion;
+  user_id: string | null;
+  created_at: string;
+  revisado_at: string | null;
+}
