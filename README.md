@@ -93,16 +93,32 @@ dashboard de Supabase:
    activado (default), un usuario nuevo tiene que confirmar el email antes
    de poder iniciar sesión. Para probar más rápido en desarrollo, se puede
    desactivar.
-3. Opcional: **Authentication → Emails → Confirm signup** — reemplazá el
-   asunto/cuerpo genérico de Supabase por la plantilla en
-   `supabase/email-templates/confirm-signup.html` (con el branding de
-   habit·AN·do). El remitente sigue siendo el compartido de Supabase salvo
-   que se configure SMTP propio en Authentication → Settings → SMTP Settings.
-
 Sin cuenta se puede seguir navegando el catálogo y comprando con
 normalidad — el login solo es necesario para guardar favoritos
 (`/perfil`). Sin las credenciales de Supabase configuradas, `/login` y
 `/registro` muestran un aviso en vez de romperse.
+
+### Mail con marca propia (pendiente de dominio)
+
+Por default, los emails de confirmación salen con la plantilla genérica de
+Supabase (remitente `noreply@mail.app.supabase.io`). Supabase **bloquea el
+editor de plantillas hasta que se configure un SMTP propio** — no es algo
+que se pueda resolver solo desde el dashboard.
+
+Para personalizarlo hace falta:
+
+1. Tener acceso al DNS de `habitando.com.ar` (o el dominio que se use).
+2. Verificar ese dominio en un proveedor de email transaccional (por
+   ejemplo [Resend](https://resend.com), tiene plan gratis) agregando los
+   registros TXT/CNAME que pida.
+3. Cargar esas credenciales SMTP en Supabase: **Authentication → Emails →
+   SMTP Settings**.
+4. Recién ahí se habilita **Authentication → Emails → Templates**, donde
+   se pega la plantilla de `supabase/email-templates/confirm-signup.html`
+   (asunto: "Confirmá tu cuenta en habit·AN·do").
+
+Hasta que se configure, el flujo funciona igual (el código ya contempla
+ambos casos) — solo cambia el diseño del mail que reciben los usuarios.
 
 ## Próximos pasos sugeridos
 
