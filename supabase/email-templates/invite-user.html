@@ -1,0 +1,51 @@
+<!--
+  Plantilla de "Invite user" para Supabase Auth.
+
+  Se usa cuando se aprueba una solicitud de estudio (src/lib/estudio-actions.ts
+  llama a supabase.auth.admin.inviteUserByEmail) — es un mail DISTINTO al de
+  "Confirm signup", hay que configurarlo aparte.
+
+  Cómo usarla (con SMTP propio ya configurado):
+  1. Supabase Dashboard → Authentication → Emails → "Invite user"
+  2. Subject: "Tu estudio fue aprobado en habit·AN·do"
+  3. Message body: pegá el HTML de abajo tal cual.
+
+  Variables disponibles:
+  - {{ .ConfirmationURL }} → link que loguea a la persona y la manda a
+    /activar-cuenta (definido en redirectTo, ver aprobarSolicitud)
+  - {{ .Email }} → el email invitado
+-->
+<div style="background-color:#fafafa;padding:40px 16px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+  <div style="max-width:480px;margin:0 auto;background-color:#ffffff;border-radius:16px;overflow:hidden;border:1px solid #e4e4e7;">
+    <div style="padding:32px 32px 0 32px;">
+      <p style="margin:0 0 24px 0;font-size:13px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;color:#71717a;">
+        habit·AN·do para estudios
+      </p>
+      <h1 style="margin:0 0 12px 0;font-size:22px;line-height:1.3;color:#18181b;">
+        ¡Tu estudio fue aprobado!
+      </h1>
+      <p style="margin:0 0 24px 0;font-size:15px;line-height:1.6;color:#3f3f46;">
+        Ya podés acceder a precios mayoristas, specs técnicas ampliadas y a
+        la herramienta para armar propuestas para tus clientes. Tocá el
+        botón para activar <strong>{{ .Email }}</strong> y elegir tu
+        contraseña.
+      </p>
+    </div>
+
+    <div style="padding:0 32px 32px 32px;">
+      <a href="{{ .ConfirmationURL }}"
+         style="display:block;text-align:center;background-color:#18181b;color:#ffffff;
+                text-decoration:none;font-size:15px;font-weight:600;padding:14px 24px;
+                border-radius:9999px;">
+        Activar mi cuenta
+      </a>
+    </div>
+
+    <div style="padding:20px 32px;background-color:#fafafa;border-top:1px solid #e4e4e7;">
+      <p style="margin:0;font-size:13px;line-height:1.6;color:#71717a;">
+        Por ahora la facturación se coordina directamente con nosotros — no
+        hay pasarela de pago integrada todavía.
+      </p>
+    </div>
+  </div>
+</div>

@@ -102,27 +102,22 @@ normalidad — el login solo es necesario para guardar favoritos
 (`/perfil`). Sin las credenciales de Supabase configuradas, `/login` y
 `/registro` muestran un aviso en vez de romperse.
 
-### Mail con marca propia (pendiente de dominio)
+### Mail con marca propia
 
-Por default, los emails de confirmación salen con la plantilla genérica de
-Supabase (remitente `noreply@mail.app.supabase.io`). Supabase **bloquea el
-editor de plantillas hasta que se configure un SMTP propio** — no es algo
-que se pueda resolver solo desde el dashboard.
+SMTP propio configurado vía [Resend](https://resend.com) con el dominio
+`habitando.com.ar` verificado (Authentication → Emails → SMTP Settings).
+Con eso habilitado, en **Authentication → Emails → Templates** se pegan:
 
-Para personalizarlo hace falta:
+- **Confirm signup** (registro normal en `/registro`): asunto "Confirmá tu
+  cuenta en habit·AN·do", cuerpo en
+  `supabase/email-templates/confirm-signup.html`.
+- **Invite user** (aprobación de una solicitud de estudio, ver sección B2B
+  más abajo): asunto "Tu estudio fue aprobado en habit·AN·do", cuerpo en
+  `supabase/email-templates/invite-user.html`. Es una plantilla aparte —
+  `inviteUserByEmail` no usa la de "Confirm signup".
 
-1. Tener acceso al DNS de `habitando.com.ar` (o el dominio que se use).
-2. Verificar ese dominio en un proveedor de email transaccional (por
-   ejemplo [Resend](https://resend.com), tiene plan gratis) agregando los
-   registros TXT/CNAME que pida.
-3. Cargar esas credenciales SMTP en Supabase: **Authentication → Emails →
-   SMTP Settings**.
-4. Recién ahí se habilita **Authentication → Emails → Templates**, donde
-   se pega la plantilla de `supabase/email-templates/confirm-signup.html`
-   (asunto: "Confirmá tu cuenta en habit·AN·do").
-
-Hasta que se configure, el flujo funciona igual (el código ya contempla
-ambos casos) — solo cambia el diseño del mail que reciben los usuarios.
+Sin SMTP propio configurado, Supabase usa su plantilla genérica compartida
+igual — el flujo funciona en ambos casos, solo cambia el diseño del mail.
 
 ## Sección B2B para estudios
 
