@@ -1,4 +1,4 @@
--- habit·AN·do — sección B2B para estudios de arquitectura/diseño.
+-- habit·an·do — sección B2B para estudios de arquitectura/diseño.
 -- Correr en el SQL Editor DESPUÉS de schema.sql (y seed.sql si ya se corrió).
 -- Es seguro volver a correrlo (usa if not exists / or replace / on conflict).
 

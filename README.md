@@ -1,6 +1,6 @@
-# habit·AN·do
+# habit·an·do
 
-MVP de habit·AN·do: catálogo curado de muebles, decoración, iluminación,
+MVP de habit·an·do: catálogo curado de muebles, decoración, iluminación,
 revestimientos y grifería. La plataforma no procesa pagos — cada ficha de
 producto redirige al sitio del local de origen para completar la compra.
 
@@ -109,10 +109,10 @@ SMTP propio configurado vía [Resend](https://resend.com) con el dominio
 Con eso habilitado, en **Authentication → Emails → Templates** se pegan:
 
 - **Confirm signup** (registro normal en `/registro`): asunto "Confirmá tu
-  cuenta en habit·AN·do", cuerpo en
+  cuenta en habit·an·do", cuerpo en
   `supabase/email-templates/confirm-signup.html`.
 - **Invite user** (aprobación de una solicitud de estudio, ver sección B2B
-  más abajo): asunto "Tu estudio fue aprobado en habit·AN·do", cuerpo en
+  más abajo): asunto "Tu estudio fue aprobado en habit·an·do", cuerpo en
   `supabase/email-templates/invite-user.html`. Es una plantilla aparte —
   `inviteUserByEmail` no usa la de "Confirm signup".
 
