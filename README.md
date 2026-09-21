@@ -21,7 +21,17 @@ Stack: Next.js (App Router) + TypeScript + Tailwind CSS + Supabase.
 - ✅ **Sección B2B para estudios** (`/para-estudios`): solicitud de acceso
   con aprobación manual, panel de admin y rutas premium protegidas — ver
   "Sección B2B" más abajo.
+- ✅ **Acceso temporal para clientes de un estudio** (`/estudios/clientes`):
+  un estudio aprobado genera links de invitación con vencimiento
+  configurable — ver "Clientes invitados" más abajo.
 - ⏳ Panel de asesoría y fase 2 completa: ver brief técnico, sección 2.
+
+> **Pivot de modelo de negocio**: el foco pasó a ser B2B-first — suscripciones
+> de estudios de arquitectura/diseño (solicitud + aprobación manual + rol
+> `estudio`, ya armado). El catálogo sigue público para cualquier
+> visitante; lo que queda reservado a estudios con suscripción activa son
+> las funcionalidades premium (specs técnicas ampliadas, exportar
+> propuestas, bloques CAD/SketchUp cuando existan).
 
 Ahora mismo el catálogo corre 100% sobre **datos mock** (`src/data/`) para
 poder validar la experiencia sin depender de infraestructura. La capa de
@@ -169,6 +179,42 @@ una foto (con IA) — no confirmado, se menciona como tal en `/para-estudios`.
    poner contraseña. Después de eso, `/estudios` ya es visible.
 5. Probá también entrar a `/estudios` con una cuenta normal (`cliente_final`)
    — te tiene que mandar a `/para-estudios`.
+
+## Clientes invitados (acceso temporal)
+
+Un estudio con cuenta aprobada puede darle acceso de solo-catálogo-y-favoritos
+a un cliente suyo, por tiempo limitado, sin que ese cliente pueda a su vez
+invitar a nadie.
+
+**Flujo**: estudio en `/estudios/clientes` completa proyecto (opcional) +
+duración en días → genera un link (`/invitacion/{id}`), **sin crear ninguna
+cuenta todavía** → se lo comparte al cliente por el medio que quiera
+(WhatsApp, mail, etc.) → el cliente entra al link, pone su email y
+contraseña → se crea su cuenta (`tipo_cuenta='cliente_invitado'`,
+`estudio_id` = el estudio que lo invitó, `expira_en` = hoy + los días
+elegidos) y queda logueado directo, sin pasar por confirmación de email.
+
+- El cliente invitado puede navegar el catálogo (que ya es público para
+  cualquiera) y guardar favoritos en `/perfil`, igual que una cuenta normal.
+- Cuando `expira_en` ya pasó, o el estudio lo revocó a mano, **no puede
+  volver a loguearse** — el intento de login lo desloguea al toque con el
+  mensaje "Tu acceso expiró. Consultá con tu estudio." (chequeo también en
+  `/perfil` y en el endpoint de favoritos, por si ya tenía una sesión
+  abierta de antes de expirar).
+- El estudio ve todas sus invitaciones (usadas y sin usar) en
+  `/estudios/clientes`, con estado (Pendiente de uso / Activo / Expirado /
+  Revocado) y un botón **Revocar** — antes de que la usen, invalida el
+  link; después de usada, corta el acceso de ese cliente puntual.
+
+### Setup
+
+Corré `supabase/schema-clientes-invitados.sql` en el SQL Editor (después de
+`schema.sql` y `schema-b2b.sql`). Agrega el tipo de cuenta
+`cliente_invitado` a `perfiles`, las columnas que necesita
+(`estudio_id`, `proyecto`, `expira_en`, `revocado_en`, y `email` para poder
+mostrarlo en el panel del estudio sin tocar `auth.users`), y la tabla
+`invitaciones_cliente`. No necesita ninguna variable de entorno nueva —
+usa las mismas credenciales de Supabase que ya están cargadas.
 
 ## Próximos pasos sugeridos
 

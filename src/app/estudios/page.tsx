@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 
 import { BRAND_NAME } from "@/lib/brand";
 import { requireEstudioAprobado } from "@/lib/perfiles";
@@ -25,7 +26,21 @@ export default async function EstudiosPage() {
         </h1>
       </div>
 
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
+      <div className="mb-6">
+        <Link
+          href="/estudios/clientes"
+          className="inline-flex items-center gap-2 rounded-2xl border border-black/10 p-6 transition-colors hover:bg-black/5 dark:border-white/10 dark:hover:bg-white/10"
+        >
+          <span>
+            <span className="block font-medium">Clientes invitados</span>
+            <span className="block text-sm text-zinc-500 dark:text-zinc-400">
+              Generá accesos temporales para tus clientes →
+            </span>
+          </span>
+        </Link>
+      </div>
+
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
         <Placeholder titulo="Búsqueda multi-local para tus proyectos" />
         <Placeholder titulo="Specs técnicas ampliadas" />
         <Placeholder titulo="Exportar propuesta en PDF" />

@@ -66,18 +66,25 @@ export interface FiltrosCatalogo {
 
 // --- B2B: estudios de arquitectura/diseño ---
 
-export type TipoCuenta = "cliente_final" | "estudio";
+export type TipoCuenta = "cliente_final" | "estudio" | "cliente_invitado";
 export type EstadoVerificacion = "pendiente" | "aprobado" | "rechazado";
 
 /** Extiende auth.users (ver supabase/schema-b2b.sql). Todo usuario tiene
  * una fila acá, creada automáticamente por un trigger al registrarse. */
 export interface Perfil {
   id: string;
+  email: string | null;
   tipo_cuenta: TipoCuenta;
   estado_verificacion: EstadoVerificacion | null;
   nombre_estudio: string | null;
   cuit_matricula: string | null;
   sitio_web_instagram: string | null;
+  // Solo se usan cuando tipo_cuenta === 'cliente_invitado'
+  // (ver supabase/schema-clientes-invitados.sql).
+  estudio_id: string | null;
+  proyecto: string | null;
+  expira_en: string | null;
+  revocado_en: string | null;
 }
 
 /** Solicitud de acceso B2B enviada desde /para-estudios/solicitar, antes
@@ -92,4 +99,23 @@ export interface SolicitudEstudio {
   user_id: string | null;
   created_at: string;
   revisado_at: string | null;
+}
+
+// --- Acceso temporal para clientes de un estudio ---
+
+export type EstadoInvitacion = "pendiente" | "activo" | "expirado" | "revocado";
+
+/** Link de invitación que un estudio genera para un cliente final. Antes
+ * de ser reclamado (usado_en null) no hay ninguna cuenta creada todavía. */
+export interface InvitacionCliente {
+  id: string;
+  estudio_id: string;
+  proyecto: string | null;
+  dias_validez: number;
+  creado_en: string;
+  usado_en: string | null;
+  cliente_id: string | null;
+  revocado_en: string | null;
+  // Presente solo cuando la invitación ya fue reclamada (join con perfiles).
+  cliente: Pick<Perfil, "email" | "expira_en" | "revocado_en"> | null;
 }

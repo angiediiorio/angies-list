@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { ProductCard } from "@/components/ProductCard";
 import { BRAND_NAME } from "@/lib/brand";
 import { getFavoritosConProducto } from "@/lib/favoritos";
+import { cerrarSesionSiAccesoExpirado, getPerfil } from "@/lib/perfiles";
 import { getCurrentUser } from "@/lib/supabase/current-user";
 
 export const metadata: Metadata = {
@@ -13,6 +14,11 @@ export const metadata: Metadata = {
 export default async function PerfilPage() {
   const user = await getCurrentUser();
   if (!user) redirect("/login?next=/perfil");
+
+  const perfil = await getPerfil(user.id);
+  if (await cerrarSesionSiAccesoExpirado(perfil)) {
+    redirect(`/login?error=${encodeURIComponent("Tu acceso expiró. Consultá con tu estudio.")}`);
+  }
 
   const favoritos = await getFavoritosConProducto(user.id);
 

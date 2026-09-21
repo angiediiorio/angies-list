@@ -1,21 +1,11 @@
 "use server";
 
-import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
+import { esClienteInvitadoActivo, getPerfil } from "@/lib/perfiles";
+import { getSiteUrl } from "@/lib/site-url";
 import { createClient } from "@/lib/supabase/server";
-
-// Deriva la URL pública del sitio a partir del request (funciona en local,
-// en previews de Vercel y en producción sin tener que hardcodear nada).
-// Se puede forzar con NEXT_PUBLIC_SITE_URL si hiciera falta.
-async function getSiteUrl(): Promise<string> {
-  if (process.env.NEXT_PUBLIC_SITE_URL) return process.env.NEXT_PUBLIC_SITE_URL;
-  const headersList = await headers();
-  const host = headersList.get("host") ?? "localhost:3000";
-  const protocol = host.startsWith("localhost") ? "http" : "https";
-  return `${protocol}://${host}`;
-}
 
 export async function login(formData: FormData) {
   const email = String(formData.get("email") ?? "");
@@ -27,6 +17,21 @@ export async function login(formData: FormData) {
 
   if (error) {
     redirect(`/login?error=${encodeURIComponent(error.message)}&next=${encodeURIComponent(next)}`);
+  }
+
+  // Un cliente_invitado cuyo acceso venció o fue revocado no entra, aunque
+  // la contraseña sea correcta — lo desloguemos antes de dejarlo pasar.
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (user) {
+    const perfil = await getPerfil(user.id);
+    if (perfil?.tipo_cuenta === "cliente_invitado" && !esClienteInvitadoActivo(perfil)) {
+      await supabase.auth.signOut();
+      redirect(
+        `/login?error=${encodeURIComponent("Tu acceso expiró. Consultá con tu estudio.")}`,
+      );
+    }
   }
 
   revalidatePath("/", "layout");

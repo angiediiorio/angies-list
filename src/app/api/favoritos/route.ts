@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 
+import { cerrarSesionSiAccesoExpirado, getPerfil } from "@/lib/perfiles";
 import { createClient } from "@/lib/supabase/server";
 
 // Toggle: si el producto ya estaba en favoritos lo saca, si no lo agrega.
@@ -13,6 +14,11 @@ export async function POST(request: Request) {
 
   if (!user) {
     return NextResponse.json({ error: "No autenticado" }, { status: 401 });
+  }
+
+  const perfil = await getPerfil(user.id);
+  if (await cerrarSesionSiAccesoExpirado(perfil)) {
+    return NextResponse.json({ error: "Tu acceso expiró. Consultá con tu estudio." }, { status: 401 });
   }
 
   const body = await request.json().catch(() => null);

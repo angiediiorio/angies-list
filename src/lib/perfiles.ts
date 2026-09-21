@@ -28,6 +28,27 @@ export function esEstudioAprobado(perfil: Perfil | null): boolean {
   );
 }
 
+/** true si es un cliente_invitado con acceso vigente (ni vencido ni
+ * revocado a mano por el estudio). */
+export function esClienteInvitadoActivo(perfil: Perfil | null): boolean {
+  if (!perfil || perfil.tipo_cuenta !== "cliente_invitado") return false;
+  if (perfil.revocado_en) return false;
+  if (!perfil.expira_en) return false;
+  return new Date(perfil.expira_en) > new Date();
+}
+
+/** Para usar en páginas/rutas que un cliente_invitado puede usar
+ * (Favoritos, API de favoritos): si su acceso venció o fue revocado, lo
+ * desloguea antes de dejarlo seguir. No afecta a cliente_final ni estudio. */
+export async function cerrarSesionSiAccesoExpirado(perfil: Perfil | null): Promise<boolean> {
+  if (perfil?.tipo_cuenta !== "cliente_invitado" || esClienteInvitadoActivo(perfil)) {
+    return false;
+  }
+  const supabase = await createClient();
+  await supabase.auth.signOut();
+  return true;
+}
+
 /** Para usar al principio de cualquier página/sección premium B2B. Si el
  * usuario no está logueado o no es un estudio aprobado, lo manda a la
  * landing pública en vez de mostrarle la sección. */
