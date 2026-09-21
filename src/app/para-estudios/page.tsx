@@ -6,19 +6,19 @@ import { BRAND_NAME } from "@/lib/brand";
 export const metadata: Metadata = {
   title: `Para estudios | ${BRAND_NAME}`,
   description:
-    "Precios mayoristas, specs técnicas ampliadas y herramientas para armar propuestas a tus clientes.",
+    "Agilizá la búsqueda de elementos de interiorismo y arquitectura para tus proyectos, con specs técnicas ampliadas y herramientas para armar propuestas a tus clientes.",
 };
 
 const BENEFICIOS = [
   {
+    titulo: "Búsqueda ágil para tus proyectos",
+    descripcion:
+      "Encontrá y filtrá muebles, iluminación, revestimientos, grifería y decoración de múltiples locales en un solo lugar, para no perder tiempo saltando entre sitios en la etapa de especificación.",
+  },
+  {
     titulo: "Specs técnicas ampliadas",
     descripcion:
       "Fichas de datos completas por producto: planos, medidas de instalación, terminaciones y variantes que no se muestran en el catálogo público.",
-  },
-  {
-    titulo: "Precios mayoristas",
-    descripcion:
-      "Acceso a la lista de precios para estudios, distinta a la que ve el cliente final.",
   },
   {
     titulo: "Armá propuestas para tus clientes",
@@ -27,7 +27,7 @@ const BENEFICIOS = [
   },
   {
     titulo: "Exportar en PDF",
-    descripcion: "Descargá el listado armado en PDF, con precios y specs, listo para enviar.",
+    descripcion: "Descargá el listado armado en PDF, con specs, listo para enviar.",
   },
 ];
 
@@ -40,12 +40,12 @@ export default function ParaEstudiosPage() {
             Para estudios de arquitectura y diseño
           </span>
           <h1 className="max-w-2xl text-4xl font-semibold tracking-tight sm:text-5xl">
-            Armá las propuestas de tus proyectos más rápido
+            Agilizá la búsqueda de elementos para tus proyectos
           </h1>
           <p className="max-w-xl text-lg text-zinc-600 dark:text-zinc-400">
-            Acceso a precios mayoristas, specs técnicas completas y una
-            herramienta para armar y exportar propuestas para tus clientes,
-            todo en un solo lugar.
+            Buscá, compará y armá propuestas con muebles, iluminación,
+            revestimientos, grifería y decoración de locales curados, con
+            specs técnicas ampliadas, todo en un solo lugar.
           </p>
           <Link
             href="/para-estudios/solicitar"
@@ -71,6 +71,17 @@ export default function ParaEstudiosPage() {
               </p>
             </div>
           ))}
+        </div>
+
+        <div className="mt-6 rounded-2xl border border-dashed border-black/15 p-6 dark:border-white/15">
+          <h2 className="mb-2 font-semibold text-zinc-900 dark:text-zinc-50">
+            En evaluación: bloques de AutoCAD / SketchUp
+          </h2>
+          <p className="text-sm text-zinc-600 dark:text-zinc-400">
+            Estamos viendo si es posible generar automáticamente bloques de
+            AutoCAD y SketchUp de cada producto a partir de una foto. Todavía
+            no está confirmado ni tiene fecha — si sale, va a estar acá.
+          </p>
         </div>
 
         <div className="mt-12 rounded-2xl border border-dashed border-black/15 p-6 text-center dark:border-white/15">

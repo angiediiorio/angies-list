@@ -129,8 +129,15 @@ cuenta real (invitación de Supabase) y se le manda un mail con el link para
 que elija contraseña en `/activar-cuenta` → una vez logueada, esa cuenta
 tiene `tipo_cuenta='estudio'` y `estado_verificacion='aprobado'` y puede
 entrar a las secciones premium (`/estudios`, hoy con contenido de ejemplo:
-precios mayoristas, specs ampliadas y export a PDF quedan para una próxima
-iteración — lo que ya funciona de punta a punta es el control de acceso).
+búsqueda multi-local para proyectos, specs ampliadas y export a PDF quedan
+para una próxima iteración — lo que ya funciona de punta a punta es el
+control de acceso).
+
+**Propuesta de valor B2B**: agilizar la búsqueda de elementos de
+interiorismo/arquitectura para proyectos de estudios (no precios
+mayoristas ni marketplace). A futuro, en evaluación: generar
+automáticamente bloques de AutoCAD/SketchUp de cada producto a partir de
+una foto (con IA) — no confirmado, se menciona como tal en `/para-estudios`.
 
 ### Setup
 

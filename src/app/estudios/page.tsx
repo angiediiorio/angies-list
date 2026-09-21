@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 // Placeholder del panel B2B: la parte que importa acá es el control de
 // acceso (requireEstudioAprobado redirige a /para-estudios si no
-// corresponde). El contenido real de cada sección — precios mayoristas,
+// corresponde). El contenido real de cada sección — búsqueda multi-local,
 // specs ampliadas, export a PDF — queda para una siguiente iteración.
 export default async function EstudiosPage() {
   const { perfil } = await requireEstudioAprobado();
@@ -26,7 +26,7 @@ export default async function EstudiosPage() {
       </div>
 
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
-        <Placeholder titulo="Precios mayoristas" />
+        <Placeholder titulo="Búsqueda multi-local para tus proyectos" />
         <Placeholder titulo="Specs técnicas ampliadas" />
         <Placeholder titulo="Exportar propuesta en PDF" />
       </div>
