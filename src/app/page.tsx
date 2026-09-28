@@ -21,30 +21,30 @@ export default async function Home() {
       <section className="border-b border-black/10 bg-zinc-50 dark:border-white/10 dark:bg-zinc-950">
         <div className="mx-auto flex max-w-6xl flex-col items-start gap-6 px-4 py-20 sm:px-6">
           <span className="rounded-full bg-black/5 px-3 py-1 text-xs font-medium uppercase tracking-wide text-zinc-600 dark:bg-white/10 dark:text-zinc-300">
-            Curado por una arquitecta especialista en reformas
+            Herramienta para estudios de arquitectura y diseño
           </span>
           <h1 className="max-w-2xl text-4xl font-semibold tracking-tight sm:text-5xl">
-            Equipá tu casa sin saltar entre veinte pestañas
+            Un catálogo curado para cada proyecto, no veinte pestañas abiertas
           </h1>
           <p className="max-w-xl text-lg text-zinc-600 dark:text-zinc-400">
             {BRAND_NAME} reúne muebles, decoración, iluminación,
             revestimientos y grifería de locales curados en un solo catálogo,
-            para que busques, compares y compres en el sitio de cada local con
-            un click.
+            para que armes propuestas más rápido, compartas selecciones con
+            tus clientes y compres directo en el sitio de cada local.
           </p>
           <div className="flex flex-col gap-3 sm:flex-row">
             <Link
-              href="/catalogo"
+              href="/para-estudios"
               className="rounded-full bg-zinc-950 px-6 py-3 text-center text-sm font-semibold text-white transition-colors hover:bg-zinc-800 dark:bg-white dark:text-zinc-950 dark:hover:bg-zinc-200"
+            >
+              Solicitar acceso
+            </Link>
+            <Link
+              href="/catalogo"
+              className="rounded-full border border-black/15 px-6 py-3 text-center text-sm font-semibold text-zinc-800 transition-colors hover:bg-black/5 dark:border-white/20 dark:text-zinc-100 dark:hover:bg-white/10"
             >
               Explorar catálogo
             </Link>
-            <a
-              href={`mailto:${BRAND_EMAIL}`}
-              className="rounded-full border border-black/15 px-6 py-3 text-center text-sm font-semibold text-zinc-800 transition-colors hover:bg-black/5 dark:border-white/20 dark:text-zinc-100 dark:hover:bg-white/10"
-            >
-              Sumar mi local
-            </a>
           </div>
         </div>
       </section>
@@ -99,6 +99,20 @@ export default async function Home() {
           </div>
         </section>
       )}
+
+      <section className="border-t border-black/10 bg-zinc-50 py-10 dark:border-white/10 dark:bg-zinc-950">
+        <div className="mx-auto flex max-w-6xl flex-col items-center gap-2 px-4 text-center sm:px-6">
+          <p className="text-sm text-zinc-600 dark:text-zinc-400">
+            ¿Tenés un local de muebles, decoración o iluminación?
+          </p>
+          <a
+            href={`mailto:${BRAND_EMAIL}`}
+            className="text-sm font-semibold text-zinc-950 underline underline-offset-2 dark:text-white"
+          >
+            Sumar mi local →
+          </a>
+        </div>
+      </section>
     </div>
   );
 }
