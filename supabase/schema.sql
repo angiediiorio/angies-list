@@ -4,11 +4,17 @@
 create extension if not exists "pgcrypto";
 
 create type categoria_producto as enum (
-  'mueble',
+  'muebles',
   'decoracion',
   'iluminacion',
-  'revestimiento',
-  'griferia'
+  'pisos_y_revestimientos',
+  'sanitarios',
+  'textiles',
+  'alfombras',
+  'climatizacion',
+  'bazar',
+  'jardineria',
+  'arte'
 );
 
 create table if not exists locales (

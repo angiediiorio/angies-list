@@ -7,7 +7,7 @@ export const mockLocales: Local[] = [
   {
     id: "local-1",
     nombre: "Estudio Nogal",
-    categoria: "mueble",
+    categoria: "muebles",
     direccion: "Av. Del Libertador 4550",
     ciudad: "Buenos Aires",
     lat: -34.5755,
@@ -40,7 +40,7 @@ export const mockLocales: Local[] = [
   {
     id: "local-4",
     nombre: "Piedra & Piso",
-    categoria: "revestimiento",
+    categoria: "pisos_y_revestimientos",
     direccion: "Ruta Panamericana Km 32, Pilar",
     ciudad: "Pilar",
     lat: -34.4581,
@@ -51,7 +51,7 @@ export const mockLocales: Local[] = [
   {
     id: "local-5",
     nombre: "Grival Baños",
-    categoria: "griferia",
+    categoria: "sanitarios",
     direccion: "Av. Cabildo 2340",
     ciudad: "Buenos Aires",
     lat: -34.5622,

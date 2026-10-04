@@ -10,11 +10,17 @@ import { CATEGORIAS_PRODUCTO, type CategoriaProducto, type Local } from "@/types
 // Un color por categoría, reutilizado en los pines del mapa y en los
 // botones de filtro para que se puedan asociar de un vistazo.
 const COLOR_POR_CATEGORIA: Record<CategoriaProducto, string> = {
-  mueble: "#b45309",
+  muebles: "#b45309",
   decoracion: "#be185d",
   iluminacion: "#ca8a04",
-  revestimiento: "#0f766e",
-  griferia: "#1d4ed8",
+  pisos_y_revestimientos: "#0f766e",
+  sanitarios: "#1d4ed8",
+  textiles: "#7c3aed",
+  alfombras: "#c2410c",
+  climatizacion: "#0891b2",
+  bazar: "#4d7c0f",
+  jardineria: "#15803d",
+  arte: "#9f1239",
 };
 
 // Pin propio en vez del ícono default de Leaflet: el default depende de

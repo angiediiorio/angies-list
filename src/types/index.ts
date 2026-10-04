@@ -3,18 +3,30 @@
 // para los datos mock como, más adelante, para las filas de Supabase.
 
 export type CategoriaProducto =
-  | "mueble"
+  | "muebles"
   | "decoracion"
   | "iluminacion"
-  | "revestimiento"
-  | "griferia";
+  | "pisos_y_revestimientos"
+  | "sanitarios"
+  | "textiles"
+  | "alfombras"
+  | "climatizacion"
+  | "bazar"
+  | "jardineria"
+  | "arte";
 
 export const CATEGORIAS_PRODUCTO: { value: CategoriaProducto; label: string }[] = [
-  { value: "mueble", label: "Muebles" },
+  { value: "muebles", label: "Muebles" },
   { value: "decoracion", label: "Decoración" },
   { value: "iluminacion", label: "Iluminación" },
-  { value: "revestimiento", label: "Revestimientos" },
-  { value: "griferia", label: "Grifería" },
+  { value: "pisos_y_revestimientos", label: "Pisos y revestimientos" },
+  { value: "sanitarios", label: "Sanitarios" },
+  { value: "textiles", label: "Textiles" },
+  { value: "alfombras", label: "Alfombras" },
+  { value: "climatizacion", label: "Climatización" },
+  { value: "bazar", label: "Bazar" },
+  { value: "jardineria", label: "Jardinería" },
+  { value: "arte", label: "Arte" },
 ];
 
 export interface Local {

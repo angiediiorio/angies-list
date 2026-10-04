@@ -1,8 +1,10 @@
 # habit·an·do
 
-MVP de habit·an·do: catálogo curado de muebles, decoración, iluminación,
-revestimientos y grifería. La plataforma no procesa pagos — cada ficha de
-producto redirige al sitio del local de origen para completar la compra.
+MVP de habit·an·do: catálogo curado de interiorismo y arquitectura en 11
+categorías (muebles, decoración, iluminación, pisos y revestimientos,
+sanitarios, textiles, alfombras, climatización, bazar, jardinería, arte).
+La plataforma no procesa pagos — cada ficha de producto redirige al sitio
+del local de origen para completar la compra.
 
 Stack: Next.js (App Router) + TypeScript + Tailwind CSS + Supabase.
 
@@ -80,6 +82,11 @@ un cambio de configuración, no de código.
 3. Opcional: corré `supabase/seed.sql` para cargar el mismo catálogo de
    prueba que hoy usan los datos mock (útil para comparar que ambas fuentes
    se comporten igual).
+   - Si tu proyecto ya tenía `schema.sql` corrido con las 5 categorías
+     viejas (`mueble`/`revestimiento`/`griferia`), corré también
+     `supabase/schema-categorias-v2.sql` — migra `locales`/`productos` a
+     las 11 categorías actuales sin perder datos. En un proyecto nuevo no
+     hace falta: `schema.sql` ya trae el enum completo.
 4. Copiá `.env.local.example` a `.env.local` y completá:
    ```
    DATA_SOURCE=supabase
