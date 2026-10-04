@@ -95,7 +95,9 @@ export class SupabaseCatalogoRepository implements CatalogoRepository {
       materiales: Array.from(new Set(filas.map((p) => p.material))).sort(),
       colores: Array.from(new Set(filas.map((p) => p.color))).sort(),
       estilos: Array.from(new Set(filas.map((p) => p.estilo))).sort(),
-      ciudades: Array.from(new Set(ciudadesFilas.map((l) => l.ciudad))).sort(),
+      ciudades: Array.from(
+        new Set(ciudadesFilas.map((l) => l.ciudad).filter((c): c is string => Boolean(c))),
+      ).sort(),
       precioMax: filas.length ? Math.max(...filas.map((p) => p.precio)) : 0,
     };
   }

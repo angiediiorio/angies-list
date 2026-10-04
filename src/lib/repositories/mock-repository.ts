@@ -79,7 +79,9 @@ export class MockCatalogoRepository implements CatalogoRepository {
   }
 
   async obtenerOpcionesFiltro(): Promise<OpcionesFiltro> {
-    const ciudades = Array.from(new Set(mockLocales.map((l) => l.ciudad))).sort();
+    const ciudades = Array.from(
+      new Set(mockLocales.map((l) => l.ciudad).filter((c): c is string => Boolean(c))),
+    ).sort();
     const materiales = Array.from(new Set(mockProductos.map((p) => p.material))).sort();
     const colores = Array.from(new Set(mockProductos.map((p) => p.color))).sort();
     const estilos = Array.from(new Set(mockProductos.map((p) => p.estilo))).sort();

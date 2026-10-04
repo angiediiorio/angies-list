@@ -37,23 +37,34 @@ function crearIcono(categoria: CategoriaProducto) {
 
 const CENTRO_CABA: [number, number] = [-34.6037, -58.3816];
 
+// Muchos locales son tiendas online sin dirección física — el mapa solo
+// puede ubicar a los que sí tienen lat/lng cargados.
+type LocalUbicable = Local & { lat: number; lng: number };
+
+function tieneUbicacion(local: Local): local is LocalUbicable {
+  return local.lat !== null && local.lng !== null;
+}
+
 export function LocalesMap({ locales }: { locales: Local[] }) {
   const [categoriaActiva, setCategoriaActiva] = useState<CategoriaProducto | "todas">(
     "todas",
   );
 
+  const localesUbicables = useMemo(() => locales.filter(tieneUbicacion), [locales]);
+  const sinUbicacion = locales.length - localesUbicables.length;
+
   const localesFiltrados = useMemo(
     () =>
       categoriaActiva === "todas"
-        ? locales
-        : locales.filter((l) => l.categoria === categoriaActiva),
-    [locales, categoriaActiva],
+        ? localesUbicables
+        : localesUbicables.filter((l) => l.categoria === categoriaActiva),
+    [localesUbicables, categoriaActiva],
   );
 
-  const centro: [number, number] = locales.length
+  const centro: [number, number] = localesUbicables.length
     ? [
-        locales.reduce((suma, l) => suma + l.lat, 0) / locales.length,
-        locales.reduce((suma, l) => suma + l.lng, 0) / locales.length,
+        localesUbicables.reduce((suma, l) => suma + l.lat, 0) / localesUbicables.length,
+        localesUbicables.reduce((suma, l) => suma + l.lng, 0) / localesUbicables.length,
       ]
     : CENTRO_CABA;
 
@@ -90,9 +101,12 @@ export function LocalesMap({ locales }: { locales: Local[] }) {
               <Popup>
                 <div className="flex flex-col gap-1 text-sm">
                   <span className="font-medium">{local.nombre}</span>
-                  <span className="text-zinc-500">
-                    {local.direccion}, {local.ciudad}
-                  </span>
+                  {local.direccion && (
+                    <span className="text-zinc-500">
+                      {local.direccion}
+                      {local.ciudad ? `, ${local.ciudad}` : ""}
+                    </span>
+                  )}
                   <Link
                     href={`/catalogo?categoria=${local.categoria}`}
                     className="mt-1 font-medium text-zinc-900 underline underline-offset-2"
@@ -108,6 +122,12 @@ export function LocalesMap({ locales }: { locales: Local[] }) {
 
       {localesFiltrados.length === 0 && (
         <p className="text-sm text-zinc-500">No hay locales de esa categoría todavía.</p>
+      )}
+      {sinUbicacion > 0 && (
+        <p className="text-xs text-zinc-400">
+          {sinUbicacion} {sinUbicacion === 1 ? "local" : "locales"} más sin dirección
+          cargada (no aparecen en el mapa, pero sí en el catálogo).
+        </p>
       )}
     </div>
   );

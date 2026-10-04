@@ -128,7 +128,9 @@ export default async function ProductoPage({ params }: ProductoPageProps) {
             </p>
             <p className="mt-1 font-medium">{producto.local.nombre}</p>
             <p className="text-sm text-zinc-600 dark:text-zinc-400">
-              {producto.local.direccion}, {producto.local.ciudad}
+              {producto.local.direccion
+                ? `${producto.local.direccion}${producto.local.ciudad ? `, ${producto.local.ciudad}` : ""}`
+                : "Tienda online"}
             </p>
           </div>
 

@@ -26,6 +26,9 @@ Stack: Next.js (App Router) + TypeScript + Tailwind CSS + Supabase.
 - ✅ **Acceso temporal para clientes de un estudio** (`/estudios/clientes`):
   un estudio aprobado genera links de invitación con vencimiento
   configurable — ver "Clientes invitados" más abajo.
+- ✅ **Script de importación de locales reales** (`scripts/importar-locales.ts`):
+  scraping + clasificación por IA a partir de un CSV — ver "Importar
+  locales reales" más abajo.
 - ⏳ Panel de asesoría y fase 2 completa: ver brief técnico, sección 2.
 
 > **Pivot de modelo de negocio**: el foco pasó a ser B2B-first — suscripciones
@@ -222,6 +225,79 @@ Corré `supabase/schema-clientes-invitados.sql` en el SQL Editor (después de
 mostrarlo en el panel del estudio sin tocar `auth.users`), y la tabla
 `invitaciones_cliente`. No necesita ninguna variable de entorno nueva —
 usa las mismas credenciales de Supabase que ya están cargadas.
+
+## Importar locales reales (script)
+
+`scripts/importar-locales.ts` lee un CSV de locales (nombre, sitio web,
+categorías generales), scrapea cada sitio y usa la API de Anthropic para
+extraer productos y clasificarlos en una de las 11 categorías del catálogo.
+El CSV real ya está en `scripts/data/locales-habitando.csv` (167 locales).
+
+**Corre en tu máquina, no acá en Claude Code** — este entorno no tiene
+salida de red hacia sitios externos (lo mismo que pasó con Supabase/Vercel
+al principio), así que el scraping tiene que hacerse desde tu compu con tu
+propia conexión.
+
+### Antes de correrlo
+
+1. Corré `supabase/schema-locales-opcionales.sql` en el SQL Editor (hace
+   opcionales `direccion`/`ciudad`/`lat`/`lng` en `locales` — la mayoría de
+   estos locales son tiendas online sin local físico).
+2. Cloná el repo en tu máquina (`git clone ...`) y `npm install`.
+3. Necesitás en el entorno (`.env.local` alcanza, el script lo lee igual
+   que la app):
+   ```
+   ANTHROPIC_API_KEY=...
+   NEXT_PUBLIC_SUPABASE_URL=...
+   SUPABASE_SERVICE_ROLE_KEY=...
+   ```
+   La `ANTHROPIC_API_KEY` se saca de [console.anthropic.com](https://console.anthropic.com)
+   (es una cuenta aparte de Supabase/Vercel — si no la tenés, hay que crearla ahí).
+
+### Cómo correrlo
+
+```bash
+# Probar primero con pocos locales y sin escribir nada en la base:
+npm run importar:locales -- --limit=5 --dry-run
+
+# Si se ve bien, correr en serio con un lote chico:
+npm run importar:locales -- --limit=20
+
+# Encadenar el resto (es idempotente: a los locales ya cargados
+# — mismo sitio_web — no los vuelve a crear, pero si lo corrés dos
+# veces completo sí va a duplicar los productos de un mismo local):
+npm run importar:locales
+```
+
+Flags disponibles: `--csv=ruta` (default el CSV de locales-habitando),
+`--limit=N` (cuántos locales procesar), `--max-productos=N` (por local,
+default 4), `--delay=ms` (pausa entre locales, default 1500),
+`--model=id` (default `claude-sonnet-5`; `claude-haiku-4-5-20251001` sale
+más barato si se prioriza costo sobre precisión).
+
+### Qué hace y qué no
+
+- Por cada local: busca si ya existe por `sitio_web` (si no, lo crea, sin
+  dirección/coordenadas — se pueden completar a mano después desde el
+  Table Editor de Supabase para que aparezca en el Mapa).
+- Descarga la página, le pasa el texto + URLs de imagen encontradas a
+  Claude pidiéndole que identifique hasta N productos con nombre, precio,
+  material, color, estilo, medidas y categoría.
+- La categoría se fuerza por schema (`enum` con los 11 valores exactos) Y
+  se vuelve a validar en código antes de insertar — si por algún motivo
+  llega algo fuera de esa lista, se descarta ese producto puntual con un
+  warning en vez de romper el resto de la importación.
+- Si un sitio no responde, está caído, o no tiene ningún producto con
+  nombre y precio claramente visibles, ese local queda sin productos
+  (nunca inventa datos) — quedan logueados al final cuántos fallaron.
+- El CSV trae algunas categorías sin equivalente exacto en el modelo
+  (`empapelados`, `espejos`) — se aproximan a `pisos_y_revestimientos` y
+  `decoracion` respectivamente; está documentado en el propio script
+  (`SINONIMOS_CATEGORIA`) por si se prefiere otro mapeo.
+- Sitios con mucho contenido armado en JavaScript (no en el HTML inicial)
+  pueden devolver poco o ningún texto útil — el script no usa un browser
+  real (Playwright), así que esos locales probablemente queden sin
+  productos en esta primera pasada. Es una limitación conocida, no un bug.
 
 ## Próximos pasos sugeridos
 

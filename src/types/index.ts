@@ -33,11 +33,14 @@ export interface Local {
   id: string;
   nombre: string;
   categoria: CategoriaProducto;
-  direccion: string;
-  ciudad: string;
-  lat: number;
-  lng: number;
-  contacto: string;
+  // Muchos locales son tiendas online sin dirección física — por eso estos
+  // tres son opcionales. El Mapa (/mapa) solo muestra los que sí tienen
+  // lat/lng cargados.
+  direccion: string | null;
+  ciudad: string | null;
+  lat: number | null;
+  lng: number | null;
+  contacto: string | null;
   sitio_web: string;
 }
 

@@ -21,10 +21,13 @@ create table if not exists locales (
   id uuid primary key default gen_random_uuid(),
   nombre text not null,
   categoria categoria_producto not null,
-  direccion text not null,
-  ciudad text not null,
-  lat double precision not null,
-  lng double precision not null,
+  -- Muchos locales son tiendas online sin local físico: estos tres son
+  -- opcionales a propósito. El Mapa (/mapa) solo muestra los que sí
+  -- tengan lat/lng cargados.
+  direccion text,
+  ciudad text,
+  lat double precision,
+  lng double precision,
   contacto text,
   sitio_web text not null,
   created_at timestamptz not null default now()
