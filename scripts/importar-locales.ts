@@ -32,8 +32,14 @@
 import { parse } from "csv-parse/sync";
 import * as cheerio from "cheerio";
 import Anthropic from "@anthropic-ai/sdk";
+import { config } from "dotenv";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
+
+// A diferencia de Next.js, un script suelto como este no lee .env.local
+// solo — hay que cargarlo a mano, y antes de cualquier otro import que
+// use process.env (por eso va primero).
+config({ path: resolve(process.cwd(), ".env.local") });
 
 import { createAdminClient } from "../src/lib/supabase/admin";
 import { CATEGORIAS_PRODUCTO, type CategoriaProducto } from "../src/types";
