@@ -321,6 +321,9 @@ async function extraerProductos(
 
   const herramienta = crearHerramientaExtraccion();
   const imagenesDescargadas = await bajarImagenes(imagenes, MAX_IMAGENES_POR_LOCAL);
+  console.log(
+    `  (${imagenesDescargadas.length}/${Math.min(imagenes.length, MAX_IMAGENES_POR_LOCAL)} imágenes descargadas ok)`,
+  );
 
   const contenido: Anthropic.MessageParam["content"] = [
     {
@@ -435,7 +438,8 @@ async function insertarProducto(
   const slug = `${slugify(producto.nombre)}-${slugify(localNombre)}`.slice(0, 120);
 
   if (!admin) {
-    console.log(`  [dry-run] insertaría producto: ${producto.nombre} (${producto.categoria})`);
+    const foto = producto.imagen_url ? `con foto: ${producto.imagen_url}` : "SIN foto";
+    console.log(`  [dry-run] insertaría producto: ${producto.nombre} (${producto.categoria}, ${foto})`);
     return;
   }
 
