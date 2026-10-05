@@ -24,13 +24,19 @@ export function ProductCard({ producto, favorito = false, logueado = false }: Pr
       />
 
       <div className="relative aspect-[4/3] w-full overflow-hidden bg-zinc-100 dark:bg-zinc-900">
-        <Image
-          src={producto.imagenes[0]}
-          alt={producto.nombre}
-          fill
-          sizes="(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw"
-          className="object-cover transition-transform duration-300 group-hover:scale-105"
-        />
+        {producto.imagenes[0] ? (
+          <Image
+            src={producto.imagenes[0]}
+            alt={producto.nombre}
+            fill
+            sizes="(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw"
+            className="object-cover transition-transform duration-300 group-hover:scale-105"
+          />
+        ) : (
+          <div className="flex h-full w-full items-center justify-center text-xs text-zinc-400 dark:text-zinc-600">
+            Sin foto
+          </div>
+        )}
         {!producto.stock && (
           <span className="absolute left-3 top-3 z-10 rounded-full bg-black/80 px-2.5 py-1 text-xs font-medium text-white">
             Sin stock

@@ -58,14 +58,20 @@ export default async function ProductoPage({ params }: ProductoPageProps) {
       <div className="grid grid-cols-1 gap-10 lg:grid-cols-2">
         <div className="flex flex-col gap-3">
           <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl bg-zinc-100 dark:bg-zinc-900">
-            <Image
-              src={producto.imagenes[0]}
-              alt={producto.nombre}
-              fill
-              sizes="(min-width: 1024px) 50vw, 100vw"
-              className="object-cover"
-              priority
-            />
+            {producto.imagenes[0] ? (
+              <Image
+                src={producto.imagenes[0]}
+                alt={producto.nombre}
+                fill
+                sizes="(min-width: 1024px) 50vw, 100vw"
+                className="object-cover"
+                priority
+              />
+            ) : (
+              <div className="flex h-full w-full items-center justify-center text-sm text-zinc-400 dark:text-zinc-600">
+                Sin foto
+              </div>
+            )}
           </div>
           {producto.imagenes.length > 1 && (
             <div className="grid grid-cols-4 gap-3">
