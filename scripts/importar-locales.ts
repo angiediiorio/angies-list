@@ -20,6 +20,7 @@
  *   --csv=ruta            default: scripts/data/locales-habitando.csv
  *   --limit=N             cuántos locales procesar (default: todos)
  *   --max-productos=N     productos a extraer por local (default: 4)
+ *   --max-imagenes=N      imágenes que la IA mira por local (default: 6)
  *   --delay=ms            pausa entre locales (default: 1500)
  *   --dry-run             no escribe nada en Supabase, solo loguea
  *   --model=id            modelo de Anthropic (default: claude-sonnet-5)
@@ -57,6 +58,7 @@ function leerFlag(nombre: string, porDefecto: string): string {
 const CSV_PATH = resolve(process.cwd(), leerFlag("csv", "scripts/data/locales-habitando.csv"));
 const LIMITE = Number(leerFlag("limit", "Infinity"));
 const MAX_PRODUCTOS_POR_LOCAL = Number(leerFlag("max-productos", "4"));
+const MAX_IMAGENES_POR_LOCAL = Number(leerFlag("max-imagenes", "6"));
 const DELAY_MS = Number(leerFlag("delay", "1500"));
 const DRY_RUN = process.argv.includes("--dry-run");
 const MODELO = leerFlag("model", "claude-sonnet-5");
@@ -186,6 +188,7 @@ async function bajarContenido(
       .map((_, el) => $(el).attr("src") || $(el).attr("data-src") || "")
       .get()
       .filter(Boolean)
+      .filter((src) => !src.startsWith("data:")) // no son URLs descargables
       .map((src) => {
         try {
           return new URL(src, url).toString();
@@ -194,6 +197,7 @@ async function bajarContenido(
         }
       })
       .filter((src): src is string => Boolean(src))
+      .filter((src) => !/\b(logo|icon|favicon|sprite)\b/i.test(src)) // casi nunca es foto de producto
       .slice(0, 25);
 
     return { texto, imagenes };
@@ -202,6 +206,50 @@ async function bajarContenido(
   } finally {
     clearTimeout(timeout);
   }
+}
+
+// ---------------------------------------------------------------------------
+// Descarga de imágenes para que la IA las vea (no solo lea sus URLs)
+// ---------------------------------------------------------------------------
+
+const TIPOS_IMAGEN_SOPORTADOS = new Set(["image/jpeg", "image/png", "image/gif", "image/webp"]);
+const MAX_BYTES_IMAGEN = 3 * 1024 * 1024; // 3MB — más que eso no vale el costo/tiempo
+
+interface ImagenDescargada {
+  url: string;
+  mediaType: "image/jpeg" | "image/png" | "image/gif" | "image/webp";
+  base64: string;
+}
+
+async function bajarImagen(url: string): Promise<ImagenDescargada | null> {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 10000);
+  try {
+    const res = await fetch(url, { signal: controller.signal });
+    if (!res.ok) return null;
+
+    const mediaType = (res.headers.get("content-type") || "").split(";")[0].trim();
+    if (!TIPOS_IMAGEN_SOPORTADOS.has(mediaType)) return null;
+
+    const buffer = Buffer.from(await res.arrayBuffer());
+    if (buffer.byteLength === 0 || buffer.byteLength > MAX_BYTES_IMAGEN) return null;
+
+    return {
+      url,
+      mediaType: mediaType as ImagenDescargada["mediaType"],
+      base64: buffer.toString("base64"),
+    };
+  } catch {
+    return null;
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
+async function bajarImagenes(urls: string[], max: number): Promise<ImagenDescargada[]> {
+  const candidatas = urls.slice(0, max);
+  const resultados = await Promise.all(candidatas.map((url) => bajarImagen(url)));
+  return resultados.filter((img): img is ImagenDescargada => img !== null);
 }
 
 // ---------------------------------------------------------------------------
@@ -251,7 +299,7 @@ function crearHerramientaExtraccion() {
               descripcion: { type: "string" as const, description: "1-2 oraciones." },
               imagen_url: {
                 type: "string" as const,
-                description: "Una de las URLs de imagen provistas que corresponda a este producto, si se puede inferir. Si no, cadena vacía.",
+                description: "La URL EXACTA (tal como se te mostró junto a cada imagen) de la foto que corresponde a este producto, mirando las imágenes provistas. Si ninguna imagen corresponde con confianza, cadena vacía — no inventar ni adivinar por descarte.",
               },
             },
             required: ["nombre", "categoria", "precio"],
@@ -272,21 +320,34 @@ async function extraerProductos(
   if (!texto) return [];
 
   const herramienta = crearHerramientaExtraccion();
+  const imagenesDescargadas = await bajarImagenes(imagenes, MAX_IMAGENES_POR_LOCAL);
+
+  const contenido: Anthropic.MessageParam["content"] = [
+    {
+      type: "text",
+      text:
+        `Local: ${nombreLocal}\n\n` +
+        `Contenido de texto de la página (recortado):\n${texto}\n\n` +
+        (imagenesDescargadas.length > 0
+          ? `A continuación se muestran ${imagenesDescargadas.length} imágenes encontradas en la página, cada una precedida por su URL exacta. Miralas para asociar cada producto con su foto correcta.`
+          : "No se pudo descargar ninguna imagen de esta página."),
+    },
+  ];
+
+  for (const img of imagenesDescargadas) {
+    contenido.push({ type: "text", text: `URL de la imagen siguiente: ${img.url}` });
+    contenido.push({
+      type: "image",
+      source: { type: "base64", media_type: img.mediaType, data: img.base64 },
+    });
+  }
 
   const mensaje = await anthropic.messages.create({
     model: MODELO,
     max_tokens: 2048,
     tools: [herramienta],
     tool_choice: { type: "tool", name: "extraer_productos" },
-    messages: [
-      {
-        role: "user",
-        content:
-          `Local: ${nombreLocal}\n\n` +
-          `Contenido de texto de la página (recortado):\n${texto}\n\n` +
-          `URLs de imagen encontradas en la página (puede que no haya ninguna relevante):\n${imagenes.join("\n")}`,
-      },
-    ],
+    messages: [{ role: "user", content: contenido }],
   });
 
   const bloqueHerramienta = mensaje.content.find(
@@ -421,7 +482,7 @@ async function main() {
 
   const filas = leerCsv(CSV_PATH).slice(0, Number.isFinite(LIMITE) ? LIMITE : undefined);
   console.log(
-    `${filas.length} locales a procesar (modelo: ${MODELO}, hasta ${MAX_PRODUCTOS_POR_LOCAL} productos c/u${DRY_RUN ? ", DRY RUN" : ""}).\n`,
+    `${filas.length} locales a procesar (modelo: ${MODELO}, hasta ${MAX_PRODUCTOS_POR_LOCAL} productos y ${MAX_IMAGENES_POR_LOCAL} imágenes c/u${DRY_RUN ? ", DRY RUN" : ""}).\n`,
   );
 
   let totalProductos = 0;

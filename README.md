@@ -271,18 +271,23 @@ npm run importar:locales
 
 Flags disponibles: `--csv=ruta` (default el CSV de locales-habitando),
 `--limit=N` (cuántos locales procesar), `--max-productos=N` (por local,
-default 4), `--delay=ms` (pausa entre locales, default 1500),
-`--model=id` (default `claude-sonnet-5`; `claude-haiku-4-5-20251001` sale
-más barato si se prioriza costo sobre precisión).
+default 4), `--max-imagenes=N` (fotos que la IA mira por local, default 6),
+`--delay=ms` (pausa entre locales, default 1500), `--model=id` (default
+`claude-sonnet-5`; `claude-haiku-4-5-20251001` sale más barato si se
+prioriza costo sobre precisión).
 
 ### Qué hace y qué no
 
 - Por cada local: busca si ya existe por `sitio_web` (si no, lo crea, sin
   dirección/coordenadas — se pueden completar a mano después desde el
   Table Editor de Supabase para que aparezca en el Mapa).
-- Descarga la página, le pasa el texto + URLs de imagen encontradas a
-  Claude pidiéndole que identifique hasta N productos con nombre, precio,
-  material, color, estilo, medidas y categoría.
+- Descarga la página y le pasa a Claude el texto + hasta `--max-imagenes`
+  fotos reales (descargadas y mostradas como imagen, no solo la URL como
+  texto) para que identifique hasta N productos con nombre, precio,
+  material, color, estilo, medidas, categoría y la foto que corresponde a
+  cada uno. Si no hay ninguna imagen que matchee con confianza, el
+  producto queda sin foto (`imagenes: []`) — la UI lo maneja mostrando
+  "Sin foto" en vez de romper.
 - La categoría se fuerza por schema (`enum` con los 11 valores exactos) Y
   se vuelve a validar en código antes de insertar — si por algún motivo
   llega algo fuera de esa lista, se descarta ese producto puntual con un
@@ -298,6 +303,15 @@ más barato si se prioriza costo sobre precisión).
   pueden devolver poco o ningún texto útil — el script no usa un browser
   real (Playwright), así que esos locales probablemente queden sin
   productos en esta primera pasada. Es una limitación conocida, no un bug.
+
+### Costo estimado (API de Anthropic)
+
+Con `claude-sonnet-5` ($2/millón de tokens de entrada, $10/millón de
+salida) y el default de 6 imágenes por local, cada local sale
+aproximadamente 2-3 centavos de dólar. Para los 167 locales del CSV
+completo, el total ronda **los 3-6 dólares**, variando según cuántas
+imágenes tenga cada sitio. Se puede ver el saldo y el consumo real en
+[console.anthropic.com](https://console.anthropic.com) → Billing.
 
 ## Próximos pasos sugeridos
 
