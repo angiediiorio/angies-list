@@ -18,7 +18,8 @@
  *
  * Flags:
  *   --csv=ruta            default: scripts/data/locales-habitando.csv
- *   --limit=N             cuántos locales procesar (default: todos)
+ *   --offset=N            cuántos locales saltear desde el principio del CSV (default: 0)
+ *   --limit=N             cuántos locales procesar desde ahí (default: todos los que queden)
  *   --max-productos=N     productos a extraer por local (default: 4)
  *   --max-imagenes=N      imágenes que la IA mira por local (default: 6)
  *   --delay=ms            pausa entre locales (default: 1500)
@@ -56,6 +57,7 @@ function leerFlag(nombre: string, porDefecto: string): string {
 }
 
 const CSV_PATH = resolve(process.cwd(), leerFlag("csv", "scripts/data/locales-habitando.csv"));
+const OFFSET = Number(leerFlag("offset", "0"));
 const LIMITE = Number(leerFlag("limit", "Infinity"));
 const MAX_PRODUCTOS_POR_LOCAL = Number(leerFlag("max-productos", "4"));
 const MAX_IMAGENES_POR_LOCAL = Number(leerFlag("max-imagenes", "6"));
@@ -484,7 +486,7 @@ async function main() {
   const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
   const admin = DRY_RUN ? null : createAdminClient();
 
-  const filas = leerCsv(CSV_PATH).slice(0, Number.isFinite(LIMITE) ? LIMITE : undefined);
+  const filas = leerCsv(CSV_PATH).slice(OFFSET, Number.isFinite(LIMITE) ? OFFSET + LIMITE : undefined);
   console.log(
     `${filas.length} locales a procesar (modelo: ${MODELO}, hasta ${MAX_PRODUCTOS_POR_LOCAL} productos y ${MAX_IMAGENES_POR_LOCAL} imágenes c/u${DRY_RUN ? ", DRY RUN" : ""}).\n`,
   );

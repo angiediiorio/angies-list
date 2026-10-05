@@ -270,8 +270,10 @@ npm run importar:locales
 ```
 
 Flags disponibles: `--csv=ruta` (default el CSV de locales-habitando),
-`--limit=N` (cuántos locales procesar), `--max-productos=N` (por local,
-default 4), `--max-imagenes=N` (fotos que la IA mira por local, default 6),
+`--offset=N` (cuántos locales saltear desde el principio, para continuar
+donde quedó una corrida anterior sin duplicar), `--limit=N` (cuántos
+locales procesar desde ahí), `--max-productos=N` (por local, default 4),
+`--max-imagenes=N` (fotos que la IA mira por local, default 6),
 `--delay=ms` (pausa entre locales, default 1500), `--model=id` (default
 `claude-sonnet-5`; `claude-haiku-4-5-20251001` sale más barato si se
 prioriza costo sobre precisión).
