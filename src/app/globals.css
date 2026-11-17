@@ -1,5 +1,12 @@
 @import "tailwindcss";
 
+/* Pasa el modo oscuro de Tailwind de "sigue el sistema" a "solo con una
+   clase .dark" — que nunca se agrega en ningún lado. Es la demo para
+   estudios: tiene que verse igual (cremita) sin importar si el visitante
+   tiene el modo oscuro activado en su SO/navegador, en TODAS las páginas,
+   no solo en las que ya migramos a los tokens nuevos. */
+@custom-variant dark (&:where(.dark, .dark *));
+
 /* Paleta cálida (cremita) + tipografía serif para títulos, guiada por las
    referencias visuales de la demo a estudios. Nombres de token al estilo
    shadcn/ui (--primary, --muted, --border, etc.) para que los componentes
@@ -67,37 +74,9 @@
   --font-display: var(--font-fraunces);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #19160f;
-    --foreground: #f2ece0;
-
-    --card: #231f17;
-    --card-foreground: #f2ece0;
-
-    --popover: #231f17;
-    --popover-foreground: #f2ece0;
-
-    --primary: #f2ece0;
-    --primary-foreground: #19160f;
-
-    --secondary: #2e2a20;
-    --secondary-foreground: #f2ece0;
-
-    --muted: #2e2a20;
-    --muted-foreground: #b4aa97;
-
-    --accent: #3a4634;
-    --accent-foreground: #d9e3cc;
-
-    --destructive: #e46a62;
-    --destructive-foreground: #19160f;
-
-    --border: #332d21;
-    --input: #332d21;
-    --ring: #f2ece0;
-  }
-}
+/* A propósito, sin variante dark (@media prefers-color-scheme) — para esta
+   demo el sitio siempre muestra la paleta cremita, sin importar la
+   configuración de modo oscuro del sistema del visitante. */
 
 body {
   background: var(--background);
