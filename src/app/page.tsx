@@ -21,16 +21,47 @@ export default async function Home() {
 
   return (
     <div className="flex flex-1 flex-col">
-      <section className="border-b border-border">
-        <div className="mx-auto grid max-w-6xl grid-cols-1 items-center gap-12 px-4 py-20 sm:px-6 lg:grid-cols-2 lg:py-28">
-          <div className="flex flex-col items-start gap-6">
-            <span className="rounded-full bg-secondary px-3 py-1 text-xs font-medium uppercase tracking-wide text-secondary-foreground">
-              Herramienta para estudios de arquitectura y diseño
-            </span>
-            <h1 className="font-display text-4xl font-medium leading-[1.05] tracking-tight sm:text-5xl lg:text-6xl">
-              Un catálogo curado para cada proyecto
+      <section className="relative overflow-hidden border-b border-border">
+        <div className="mx-auto max-w-7xl px-4 pb-16 pt-14 sm:px-6 lg:pb-24 lg:pt-20">
+          <span className="inline-block rounded-full bg-secondary px-3 py-1 text-xs font-medium uppercase tracking-wide text-secondary-foreground">
+            Herramienta para estudios de arquitectura y diseño
+          </span>
+
+          {/* Nombre de marca gigante (fino + bold) en una sola línea, con
+              la foto de un destacado superpuesta justo en el medio —
+              igual que la referencia. */}
+          <div className="relative mt-6 flex flex-wrap items-baseline gap-x-3">
+            <h1 className="pointer-events-none select-none font-display leading-[0.82] tracking-tight text-foreground">
+              <span className="text-[20vw] font-extralight sm:text-[15vw] lg:text-[11rem]">
+                habit
+              </span>
+              <span className="text-[20vw] font-black sm:text-[15vw] lg:text-[11rem]">
+                an·do
+              </span>
             </h1>
-            <p className="max-w-md text-lg text-muted-foreground">
+
+            <div className="pointer-events-none absolute left-1/2 top-1/2 z-10 hidden w-[26%] -translate-x-1/2 -translate-y-1/2 sm:block lg:w-[22%]">
+              <div className="relative aspect-[4/5] overflow-hidden rounded-3xl bg-muted shadow-2xl ring-1 ring-black/5">
+                {heroProducto?.imagenes[0] && (
+                  <Image
+                    src={heroProducto.imagenes[0]}
+                    alt={heroProducto.nombre}
+                    fill
+                    sizes="22vw"
+                    className="object-cover"
+                    priority
+                  />
+                )}
+              </div>
+            </div>
+          </div>
+
+          <p className="mt-3 text-sm uppercase tracking-wide text-muted-foreground">
+            Catálogo curado para estudios de arquitectura y diseño
+          </p>
+
+          <div className="mt-10 flex flex-col gap-6 lg:max-w-lg">
+            <p className="text-lg text-muted-foreground">
               {BRAND_NAME} reúne muebles, decoración, iluminación,
               revestimientos y grifería de locales curados en un solo
               catálogo, para que armes propuestas más rápido, compartas
@@ -44,39 +75,6 @@ export default async function Home() {
               <Button asChild size="lg" variant="outline">
                 <Link href="/catalogo">Explorar catálogo</Link>
               </Button>
-            </div>
-          </div>
-
-          <div className="relative">
-            <div className="relative aspect-[4/5] w-full overflow-hidden rounded-3xl bg-muted">
-              {heroProducto?.imagenes[0] ? (
-                <Image
-                  src={heroProducto.imagenes[0]}
-                  alt={heroProducto.nombre}
-                  fill
-                  sizes="(min-width: 1024px) 40vw, 90vw"
-                  className="object-cover"
-                  priority
-                />
-              ) : (
-                <div className="flex h-full w-full items-center justify-center text-sm text-muted-foreground">
-                  {BRAND_NAME}
-                </div>
-              )}
-            </div>
-            <div className="absolute -bottom-4 left-4 flex flex-col gap-3 sm:-left-6">
-              <Link
-                href="/catalogo"
-                className="rounded-2xl border border-border bg-card px-4 py-3 text-sm font-medium shadow-lg transition-colors hover:bg-secondary"
-              >
-                Ver catálogo →
-              </Link>
-              <Link
-                href="/para-estudios"
-                className="rounded-2xl border border-border bg-card px-4 py-3 text-sm font-medium shadow-lg transition-colors hover:bg-secondary"
-              >
-                Para estudios →
-              </Link>
             </div>
           </div>
         </div>

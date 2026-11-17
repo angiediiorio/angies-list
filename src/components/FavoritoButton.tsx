@@ -25,7 +25,7 @@ export function FavoritoButton({
   const [favorito, setFavorito] = useState(favoritoInicial);
   const [cargando, setCargando] = useState(false);
 
-  const base = "flex h-9 w-9 items-center justify-center rounded-full bg-card/90 shadow transition-colors";
+  const base = "flex h-9 w-9 items-center justify-center transition-opacity hover:opacity-70";
 
   if (!logueado) {
     return (
@@ -82,9 +82,9 @@ function CorazonIcon({ relleno }: { relleno: boolean }) {
   return (
     <svg
       viewBox="0 0 24 24"
-      className="h-5 w-5"
-      fill={relleno ? "#dc2626" : "none"}
-      stroke={relleno ? "#dc2626" : "currentColor"}
+      className="h-5 w-5 text-black drop-shadow-[0_1px_2px_rgba(0,0,0,0.45)] dark:text-white"
+      fill={relleno ? "currentColor" : "none"}
+      stroke="currentColor"
       strokeWidth={1.8}
     >
       <path

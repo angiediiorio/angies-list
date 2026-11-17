@@ -48,7 +48,7 @@ export function ProductCard({ producto, favorito = false, logueado = false }: Pr
           productoId={producto.id}
           favoritoInicial={favorito}
           logueado={logueado}
-          className="absolute right-3 top-3 z-10 border border-border"
+          className="absolute right-3 top-3 z-10"
         />
       </div>
       <div className="pointer-events-none relative z-0 flex flex-1 flex-col gap-1 p-4">

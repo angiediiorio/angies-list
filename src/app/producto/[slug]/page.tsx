@@ -104,7 +104,6 @@ export default async function ProductoPage({ params }: ProductoPageProps) {
                 productoId={producto.id}
                 favoritoInicial={favoritoIds.has(producto.id)}
                 logueado={Boolean(usuario)}
-                className="border border-border"
               />
             </div>
             <h1 className="mt-3 font-display text-2xl font-medium tracking-tight sm:text-3xl">
