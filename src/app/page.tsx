@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 
 import { ProductCard } from "@/components/ProductCard";
@@ -16,7 +15,6 @@ export default async function Home() {
     getCurrentUser(),
   ]);
   const destacados = productosDestacados.slice(0, 3);
-  const heroProducto = destacados[0];
   const favoritoIds = usuario ? await getFavoritoIds(usuario.id) : new Set<string>();
 
   return (
@@ -27,34 +25,16 @@ export default async function Home() {
             Herramienta para estudios de arquitectura y diseño
           </span>
 
-          {/* Nombre de marca gigante (fino + bold) en una sola línea, con
-              la foto de un destacado superpuesta justo en el medio —
-              igual que la referencia. */}
-          <div className="relative mt-6 flex flex-wrap items-baseline gap-x-3">
-            <h1 className="pointer-events-none select-none font-display leading-[0.82] tracking-tight text-foreground">
-              <span className="text-[20vw] font-extralight sm:text-[15vw] lg:text-[11rem]">
-                habit
-              </span>
-              <span className="text-[20vw] font-black sm:text-[15vw] lg:text-[11rem]">
-                an·do
-              </span>
-            </h1>
-
-            <div className="pointer-events-none absolute left-1/2 top-1/2 z-10 hidden w-[26%] -translate-x-1/2 -translate-y-1/2 sm:block lg:w-[22%]">
-              <div className="relative aspect-[4/5] overflow-hidden rounded-3xl bg-muted shadow-2xl ring-1 ring-black/5">
-                {heroProducto?.imagenes[0] && (
-                  <Image
-                    src={heroProducto.imagenes[0]}
-                    alt={heroProducto.nombre}
-                    fill
-                    sizes="22vw"
-                    className="object-cover"
-                    priority
-                  />
-                )}
-              </div>
-            </div>
-          </div>
+          {/* Nombre de marca gigante (fino + bold) en una sola línea,
+              mismo contraste de pesos que la referencia form&wood. */}
+          <h1 className="mt-6 select-none font-display leading-[0.82] tracking-tight text-foreground">
+            <span className="text-[20vw] font-extralight sm:text-[15vw] lg:text-[11rem]">
+              habit
+            </span>
+            <span className="text-[20vw] font-black sm:text-[15vw] lg:text-[11rem]">
+              an·do
+            </span>
+          </h1>
 
           <p className="mt-3 text-sm uppercase tracking-wide text-muted-foreground">
             Catálogo curado para estudios de arquitectura y diseño
