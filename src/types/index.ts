@@ -64,6 +64,10 @@ export interface Producto {
   // scripts/curar-destacados-demo.ts). Opcional porque los datos mock no
   // lo traen — se tratan como destacados igual (son un set ya curado a mano).
   destacado_demo?: boolean;
+  // object-position CSS (ej. "50% 0%") para reencuadrar la foto principal
+  // desde /admin/destacados, sin tener que recortar el archivo. null/undefined
+  // = centrado (comportamiento de siempre).
+  imagen_posicion?: string | null;
 }
 
 // Producto "enriquecido" con el local ya resuelto — lo que consumen las

@@ -5,6 +5,7 @@ import { FavoritoButton } from "@/components/FavoritoButton";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { formatPrecio } from "@/lib/format";
+import { capitalizarOracion } from "@/lib/texto";
 import type { ProductoConLocal } from "@/types";
 
 interface ProductCardProps {
@@ -33,6 +34,7 @@ export function ProductCard({ producto, favorito = false, logueado = false }: Pr
             fill
             sizes="(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw"
             className="object-cover transition-transform duration-300 group-hover:scale-105"
+            style={producto.imagen_posicion ? { objectPosition: producto.imagen_posicion } : undefined}
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center text-xs text-muted-foreground">
@@ -56,7 +58,7 @@ export function ProductCard({ producto, favorito = false, logueado = false }: Pr
           {producto.local.nombre}
         </span>
         <h3 className="line-clamp-2 font-display font-medium text-foreground">
-          {producto.nombre}
+          {capitalizarOracion(producto.nombre)}
         </h3>
         <p className="mt-auto pt-2 font-semibold text-foreground">
           {formatPrecio(producto.precio, producto.moneda)}

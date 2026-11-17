@@ -33,9 +33,14 @@ export async function SiteHeader() {
             </Link>
           )}
           {isAdminEmail(user?.email) && (
-            <Link href="/admin/estudios" className="hover:text-foreground">
-              Admin
-            </Link>
+            <>
+              <Link href="/admin/estudios" className="hover:text-foreground">
+                Admin
+              </Link>
+              <Link href="/admin/destacados" className="hover:text-foreground">
+                Destacados
+              </Link>
+            </>
           )}
           {user ? (
             <>

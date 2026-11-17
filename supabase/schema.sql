@@ -54,6 +54,9 @@ create table if not exists productos (
   -- scripts/curar-destacados-demo.ts). El catálogo filtra por esto por
   -- defecto, mostrando el completo solo con ?todos=1.
   destacado_demo boolean not null default false,
+  -- object-position CSS (ej. "50% 0%") para reencuadrar la foto principal
+  -- desde /admin/destacados sin recortar el archivo. null = centrado.
+  imagen_posicion text,
   created_at timestamptz not null default now()
 );
 

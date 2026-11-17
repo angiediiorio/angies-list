@@ -12,6 +12,7 @@ import { getCatalogoRepository } from "@/lib/catalogo";
 import { BRAND_NAME } from "@/lib/brand";
 import { getFavoritoIds } from "@/lib/favoritos";
 import { formatPrecio } from "@/lib/format";
+import { capitalizarOracion } from "@/lib/texto";
 import { getCurrentUser } from "@/lib/supabase/current-user";
 import { CATEGORIAS_PRODUCTO } from "@/types";
 
@@ -28,7 +29,7 @@ export async function generateMetadata({
   if (!producto) return { title: `Producto no encontrado | ${BRAND_NAME}` };
 
   return {
-    title: `${producto.nombre} | ${BRAND_NAME}`,
+    title: `${capitalizarOracion(producto.nombre)} | ${BRAND_NAME}`,
     description: producto.descripcion,
   };
 }
@@ -55,7 +56,7 @@ export default async function ProductoPage({ params }: ProductoPageProps) {
         <Link href="/catalogo" className="hover:text-foreground">
           Catálogo
         </Link>{" "}
-        / <span className="text-foreground/80">{producto.nombre}</span>
+        / <span className="text-foreground/80">{capitalizarOracion(producto.nombre)}</span>
       </nav>
 
       <div className="grid grid-cols-1 gap-10 lg:grid-cols-2">
@@ -68,6 +69,7 @@ export default async function ProductoPage({ params }: ProductoPageProps) {
                 fill
                 sizes="(min-width: 1024px) 50vw, 100vw"
                 className="object-cover"
+                style={producto.imagen_posicion ? { objectPosition: producto.imagen_posicion } : undefined}
                 priority
               />
             ) : (
@@ -107,7 +109,7 @@ export default async function ProductoPage({ params }: ProductoPageProps) {
               />
             </div>
             <h1 className="mt-3 font-display text-2xl font-medium tracking-tight sm:text-3xl">
-              {producto.nombre}
+              {capitalizarOracion(producto.nombre)}
             </h1>
             <p className="mt-2 text-2xl font-semibold text-foreground">
               {formatPrecio(producto.precio, producto.moneda)}

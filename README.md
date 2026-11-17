@@ -354,6 +354,27 @@ productos reales sin curar.
    acumulan destacados de corridas viejas). Flag opcional:
    `--cantidad=N` (default 18).
 
+### Ajustar un destacado a mano (`/admin/destacados`)
+
+La curaduría automática a veces elige una foto poco vistosa, o dos
+productos del mismo local con la misma foto repetida (ej. dos variantes
+de un papel mural que la IA no pudo distinguir visualmente al
+scrapear). Para esos casos puntuales, `/admin/destacados` (mismo acceso
+que `/admin/estudios`, por `ADMIN_EMAILS`) deja, por cada local con un
+producto destacado:
+
+- **Cambiar la foto**: pegar otra URL de imagen (por ejemplo, copiada a
+  mano desde el sitio real del local con clic derecho → copiar dirección
+  de la imagen) y opcionalmente reencuadrarla (Centro/Arriba/Abajo/
+  Izquierda/Derecha) sin tener que editar el archivo.
+- **Usar otro producto del mismo local**: si el elegido no es el más
+  representativo, reemplazarlo por cualquier otro producto real de ese
+  local con un clic, sin perder la curaduría del resto del catálogo.
+
+Necesita haber corrido `supabase/schema-imagen-posicion.sql` en el SQL
+Editor (agrega la columna `imagen_posicion` a `productos`; en un
+proyecto nuevo ya viene en `schema.sql`).
+
 ## Ubicar en el mapa los locales destacados
 
 Los locales reales se importan sin dirección (la mayoría son tiendas
