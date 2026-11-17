@@ -90,7 +90,8 @@ function crearHerramientaUbicacion() {
       properties: {
         direccion: {
           type: ["string", "null"],
-          description: "Calle y altura si se menciona exactamente, o null.",
+          description:
+            "SOLO calle y altura (ej. 'Gurruchaga 1840'), sin piso/departamento/código postal ni aclaraciones entre paréntesis — eso hace fallar la geocodificación. Si no hay calle y altura concretas, null (aunque haya ciudad/barrio).",
         },
         ciudad: {
           type: ["string", "null"],
@@ -127,11 +128,31 @@ async function extraerUbicacion(
   if (!bloque) return null;
 
   const input = bloque.input as { direccion?: unknown; ciudad?: unknown };
-  const direccion = typeof input.direccion === "string" && input.direccion.trim() ? input.direccion.trim() : null;
+  const direccion = limpiarDireccion(input.direccion);
   const ciudad = typeof input.ciudad === "string" && input.ciudad.trim() ? input.ciudad.trim() : null;
 
   if (!direccion && !ciudad) return null;
   return { direccion, ciudad };
+}
+
+// Defensa extra además de la instrucción del tool: saca piso/depto, código
+// postal y aclaraciones entre paréntesis, que le hacen fallar la búsqueda
+// a Nominatim aunque la dirección en sí sea correcta.
+function limpiarDireccion(valor: unknown): string | null {
+  if (typeof valor !== "string" || !valor.trim()) return null;
+
+  const limpia = valor
+    .replace(/\([^)]*\)/g, " ") // aclaraciones entre paréntesis
+    .replace(/\b(CP|C\.P\.)\s*[A-Z]?\d{4}[A-Z]{0,3}\b/gi, " ") // código postal (incluye CPA)
+    .replace(/\b[A-Z]\d{4}[A-Z]{3}\b/g, " ") // CPA suelto (ej. C1018ADD)
+    .replace(/\bpiso\s*\S+/gi, " ")
+    .replace(/\bdepartamento\s*\S+|\bdepto\.?\s*\S+/gi, " ")
+    .replace(/,\s*,/g, ",")
+    .replace(/\s+/g, " ")
+    .replace(/^[,\s]+|[,\s]+$/g, "")
+    .trim();
+
+  return limpia || null;
 }
 
 // ---------------------------------------------------------------------------
@@ -209,24 +230,41 @@ async function main() {
       continue;
     }
 
-    const query = [ubicacion.direccion, ubicacion.ciudad, "Argentina"].filter(Boolean).join(", ");
+    const queryCompleta = [ubicacion.direccion, ubicacion.ciudad, "Argentina"].filter(Boolean).join(", ");
     await esperar(DELAY_MS); // separar la llamada a Nominatim de la del sitio
-    const coords = await geocodificar(query);
+    let coords = await geocodificar(queryCompleta);
+    let direccionGuardada = ubicacion.direccion;
+    let queryUsada = queryCompleta;
+
+    if (!coords && ubicacion.direccion && ubicacion.ciudad) {
+      // La dirección completa no resolvió — mejor un pin aproximado a
+      // nivel ciudad que ninguno. No guardamos la dirección puntual en
+      // este caso: no llegamos a confirmarla, así que no hay que
+      // afirmar una precisión que el pin no tiene.
+      const queryCiudad = [ubicacion.ciudad, "Argentina"].filter(Boolean).join(", ");
+      await esperar(DELAY_MS);
+      coords = await geocodificar(queryCiudad);
+      if (coords) {
+        direccionGuardada = null;
+        queryUsada = queryCiudad;
+      }
+    }
 
     if (!coords) {
-      console.log(`  — Mencionó "${query}" pero no se pudo geocodificar`);
+      console.log(`  — Mencionó "${queryCompleta}" pero no se pudo geocodificar`);
       await esperar(DELAY_MS);
       continue;
     }
 
-    console.log(`  ✓ ${query} → ${coords.lat}, ${coords.lng}`);
+    const aprox = direccionGuardada ? "" : " (aprox. a nivel ciudad)";
+    console.log(`  ✓ ${queryUsada} → ${coords.lat}, ${coords.lng}${aprox}`);
     encontrados++;
 
     if (!DRY_RUN) {
       const { error: errorUpdate } = await admin
         .from("locales")
         .update({
-          direccion: ubicacion.direccion,
+          direccion: direccionGuardada,
           ciudad: ubicacion.ciudad,
           lat: coords.lat,
           lng: coords.lng,
