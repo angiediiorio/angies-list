@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, type MouseEvent } from "react";
 
+import { cn } from "@/lib/utils";
+
 interface FavoritoButtonProps {
   productoId: string;
   favoritoInicial: boolean;
@@ -23,8 +25,7 @@ export function FavoritoButton({
   const [favorito, setFavorito] = useState(favoritoInicial);
   const [cargando, setCargando] = useState(false);
 
-  const base =
-    "flex h-9 w-9 items-center justify-center rounded-full bg-white/90 shadow transition-colors dark:bg-zinc-900/90";
+  const base = "flex h-9 w-9 items-center justify-center rounded-full bg-card/90 shadow transition-colors";
 
   if (!logueado) {
     return (
@@ -32,7 +33,7 @@ export function FavoritoButton({
         href="/login"
         title="Iniciá sesión para guardar favoritos"
         aria-label="Iniciá sesión para guardar favoritos"
-        className={`${base} ${className}`}
+        className={cn(base, className)}
       >
         <CorazonIcon relleno={false} />
       </Link>
@@ -70,7 +71,7 @@ export function FavoritoButton({
       aria-pressed={favorito}
       aria-label={favorito ? "Sacar de favoritos" : "Guardar en favoritos"}
       disabled={cargando}
-      className={`${base} ${className} disabled:opacity-60`}
+      className={cn(base, className, "disabled:opacity-60")}
     >
       <CorazonIcon relleno={favorito} />
     </button>

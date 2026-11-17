@@ -2,6 +2,8 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { FavoritoButton } from "@/components/FavoritoButton";
+import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
 import { formatPrecio } from "@/lib/format";
 import type { ProductoConLocal } from "@/types";
 
@@ -13,7 +15,7 @@ interface ProductCardProps {
 
 export function ProductCard({ producto, favorito = false, logueado = false }: ProductCardProps) {
   return (
-    <div className="group relative flex flex-col overflow-hidden rounded-2xl border border-black/10 bg-white transition-shadow hover:shadow-lg dark:border-white/10 dark:bg-zinc-950">
+    <Card className="group relative flex flex-col overflow-hidden transition-shadow hover:shadow-lg">
       {/* Link "estirado": cubre toda la card para que sea clickeable, pero
           vive al lado (no adentro) del botón de favorito para no anidar
           elementos interactivos. */}
@@ -23,7 +25,7 @@ export function ProductCard({ producto, favorito = false, logueado = false }: Pr
         className="absolute inset-0 z-0"
       />
 
-      <div className="relative aspect-[4/3] w-full overflow-hidden bg-zinc-100 dark:bg-zinc-900">
+      <div className="relative aspect-[4/3] w-full overflow-hidden bg-muted">
         {producto.imagenes[0] ? (
           <Image
             src={producto.imagenes[0]}
@@ -33,33 +35,33 @@ export function ProductCard({ producto, favorito = false, logueado = false }: Pr
             className="object-cover transition-transform duration-300 group-hover:scale-105"
           />
         ) : (
-          <div className="flex h-full w-full items-center justify-center text-xs text-zinc-400 dark:text-zinc-600">
+          <div className="flex h-full w-full items-center justify-center text-xs text-muted-foreground">
             Sin foto
           </div>
         )}
         {!producto.stock && (
-          <span className="absolute left-3 top-3 z-10 rounded-full bg-black/80 px-2.5 py-1 text-xs font-medium text-white">
+          <Badge variant="default" className="absolute left-3 top-3 z-10">
             Sin stock
-          </span>
+          </Badge>
         )}
         <FavoritoButton
           productoId={producto.id}
           favoritoInicial={favorito}
           logueado={logueado}
-          className="absolute right-3 top-3 z-10"
+          className="absolute right-3 top-3 z-10 border border-border"
         />
       </div>
       <div className="pointer-events-none relative z-0 flex flex-1 flex-col gap-1 p-4">
-        <span className="text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
+        <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
           {producto.local.nombre}
         </span>
-        <h3 className="line-clamp-2 font-medium text-zinc-900 dark:text-zinc-50">
+        <h3 className="line-clamp-2 font-display font-medium text-foreground">
           {producto.nombre}
         </h3>
-        <p className="mt-auto pt-2 font-semibold text-zinc-950 dark:text-white">
+        <p className="mt-auto pt-2 font-semibold text-foreground">
           {formatPrecio(producto.precio, producto.moneda)}
         </p>
       </div>
-    </div>
+    </Card>
   );
 }

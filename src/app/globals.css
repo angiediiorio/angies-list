@@ -1,26 +1,105 @@
 @import "tailwindcss";
 
+/* Paleta cálida (cremita) + tipografía serif para títulos, guiada por las
+   referencias visuales de la demo a estudios. Nombres de token al estilo
+   shadcn/ui (--primary, --muted, --border, etc.) para que los componentes
+   en src/components/ui/* los puedan usar directo. */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f7f2ea;
+  --foreground: #211d18;
+
+  --card: #fdfbf7;
+  --card-foreground: #211d18;
+
+  --popover: #fdfbf7;
+  --popover-foreground: #211d18;
+
+  --primary: #211d18;
+  --primary-foreground: #f7f2ea;
+
+  --secondary: #ece4d6;
+  --secondary-foreground: #211d18;
+
+  --muted: #ece4d6;
+  --muted-foreground: #6f6658;
+
+  --accent: #dce3d3;
+  --accent-foreground: #3c4a33;
+
+  --destructive: #b3261e;
+  --destructive-foreground: #fdfbf7;
+
+  --border: #e3dacb;
+  --input: #e3dacb;
+  --ring: #211d18;
+
+  --radius: 1rem;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --radius-sm: calc(var(--radius) - 0.5rem);
+  --radius-md: calc(var(--radius) - 0.25rem);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 0.5rem);
+
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-display: var(--font-fraunces);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #19160f;
+    --foreground: #f2ece0;
+
+    --card: #231f17;
+    --card-foreground: #f2ece0;
+
+    --popover: #231f17;
+    --popover-foreground: #f2ece0;
+
+    --primary: #f2ece0;
+    --primary-foreground: #19160f;
+
+    --secondary: #2e2a20;
+    --secondary-foreground: #f2ece0;
+
+    --muted: #2e2a20;
+    --muted-foreground: #b4aa97;
+
+    --accent: #3a4634;
+    --accent-foreground: #d9e3cc;
+
+    --destructive: #e46a62;
+    --destructive-foreground: #19160f;
+
+    --border: #332d21;
+    --input: #332d21;
+    --ring: #f2ece0;
   }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
 }

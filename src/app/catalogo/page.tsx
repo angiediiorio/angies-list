@@ -76,18 +76,20 @@ export default async function CatalogoPage({
   return (
     <div className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6">
       <div className="mb-8 flex flex-col gap-2">
-        <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">Catálogo</h1>
-        <p className="text-zinc-600 dark:text-zinc-400">
+        <h1 className="font-display text-2xl font-medium tracking-tight sm:text-3xl">
+          Catálogo
+        </h1>
+        <p className="text-muted-foreground">
           {productos.length}{" "}
           {productos.length === 1 ? "producto encontrado" : "productos encontrados"}
         </p>
-        <p className="text-sm text-zinc-500 dark:text-zinc-400">
+        <p className="text-sm text-muted-foreground">
           {mostrarTodos ? (
             <>
               Mostrando el catálogo completo, sin curar.{" "}
               <Link
                 href={hrefConToggleTodos(resolvedSearchParams, false)}
-                className="font-medium underline underline-offset-2 hover:text-zinc-950 dark:hover:text-white"
+                className="font-medium underline underline-offset-2 hover:text-foreground"
               >
                 Ver solo destacados
               </Link>
@@ -97,7 +99,7 @@ export default async function CatalogoPage({
               Mostrando la selección curada para la demo.{" "}
               <Link
                 href={hrefConToggleTodos(resolvedSearchParams, true)}
-                className="font-medium underline underline-offset-2 hover:text-zinc-950 dark:hover:text-white"
+                className="font-medium underline underline-offset-2 hover:text-foreground"
               >
                 Ver catálogo completo
               </Link>
@@ -113,7 +115,7 @@ export default async function CatalogoPage({
 
         <section>
           {productos.length === 0 ? (
-            <div className="rounded-2xl border border-dashed border-black/15 p-10 text-center text-zinc-500 dark:border-white/15">
+            <div className="rounded-2xl border border-dashed border-border p-10 text-center text-muted-foreground">
               No encontramos productos con esos filtros. Probá ajustarlos.
             </div>
           ) : (

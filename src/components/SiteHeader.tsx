@@ -11,49 +11,45 @@ export async function SiteHeader() {
   const perfil = user ? await getPerfil(user.id) : null;
 
   return (
-    <header className="border-b border-black/10 bg-white/80 backdrop-blur dark:border-white/10 dark:bg-black/60 sticky top-0 z-10">
+    <header className="sticky top-0 z-10 border-b border-border bg-background/80 backdrop-blur">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6">
-        <Link href="/" className="text-lg font-semibold tracking-tight">
+        <Link href="/" className="font-display text-lg font-medium tracking-tight">
           {BRAND_NAME}
         </Link>
-        <nav className="flex items-center gap-6 text-sm font-medium text-zinc-600 dark:text-zinc-300">
-          <Link href="/catalogo" className="hover:text-zinc-950 dark:hover:text-white">
+        <nav className="flex items-center gap-6 text-sm font-medium text-muted-foreground">
+          <Link href="/catalogo" className="hover:text-foreground">
             Catálogo
           </Link>
-          <Link href="/mapa" className="hover:text-zinc-950 dark:hover:text-white">
+          <Link href="/mapa" className="hover:text-foreground">
             Mapa
           </Link>
           {esEstudioAprobado(perfil) ? (
-            <Link href="/estudios" className="hover:text-zinc-950 dark:hover:text-white">
+            <Link href="/estudios" className="hover:text-foreground">
               Panel de estudio
             </Link>
           ) : (
-            <Link href="/para-estudios" className="hover:text-zinc-950 dark:hover:text-white">
+            <Link href="/para-estudios" className="hover:text-foreground">
               Para estudios
             </Link>
           )}
           {isAdminEmail(user?.email) && (
-            <Link href="/admin/estudios" className="hover:text-zinc-950 dark:hover:text-white">
+            <Link href="/admin/estudios" className="hover:text-foreground">
               Admin
             </Link>
           )}
           {user ? (
             <>
-              <Link href="/perfil" className="hover:text-zinc-950 dark:hover:text-white">
+              <Link href="/perfil" className="hover:text-foreground">
                 Favoritos
               </Link>
               <form action={logout}>
-                <button
-                  type="submit"
-                  className="hover:text-zinc-950 dark:hover:text-white"
-                  title={user.email}
-                >
+                <button type="submit" className="hover:text-foreground" title={user.email}>
                   Cerrar sesión
                 </button>
               </form>
             </>
           ) : (
-            <Link href="/login" className="hover:text-zinc-950 dark:hover:text-white">
+            <Link href="/login" className="hover:text-foreground">
               Iniciar sesión
             </Link>
           )}
