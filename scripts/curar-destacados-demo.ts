@@ -66,14 +66,18 @@ function nombreLocal(local: CandidatoFila["local"]): string {
   return Array.isArray(local) ? (local[0]?.nombre ?? "?") : local.nombre;
 }
 
-function estaCompleto(p: CandidatoFila): boolean {
-  if (!p.imagenes || p.imagenes.length === 0) return false;
-  if (p.material === PLACEHOLDERS.material) return false;
-  if (p.color === PLACEHOLDERS.color) return false;
-  if (p.estilo === PLACEHOLDERS.estilo) return false;
-  if (!p.medidas || p.medidas === PLACEHOLDERS.medidas) return false;
-  if (!p.descripcion || p.descripcion.trim().length < 15) return false;
-  return true;
+// Devuelve los motivos por los que el producto NO entra en la demo (array
+// vacío = está completo). Separado de un simple boolean para poder armar
+// el diagnóstico de abajo (qué campo es el cuello de botella real).
+function motivosIncompleto(p: CandidatoFila): string[] {
+  const motivos: string[] = [];
+  if (!p.imagenes || p.imagenes.length === 0) motivos.push("sin foto");
+  if (p.material === PLACEHOLDERS.material) motivos.push("sin material");
+  if (p.color === PLACEHOLDERS.color) motivos.push("sin color");
+  if (p.estilo === PLACEHOLDERS.estilo) motivos.push("sin estilo");
+  if (!p.medidas || p.medidas === PLACEHOLDERS.medidas) motivos.push("sin medidas");
+  if (!p.descripcion || p.descripcion.trim().length < 15) motivos.push("sin descripción");
+  return motivos;
 }
 
 // Round-robin por categoría: una vuelta toma como máximo un producto de
@@ -127,10 +131,21 @@ async function main() {
   const porCategoria = new Map<CategoriaProducto, CandidatoFila[]>();
   for (const { value: categoria } of CATEGORIAS_PRODUCTO) porCategoria.set(categoria, []);
 
+  const conteoMotivos = new Map<string, number>();
   for (const p of todos) {
-    if (!estaCompleto(p)) continue;
+    const motivos = motivosIncompleto(p);
+    if (motivos.length > 0) {
+      for (const m of motivos) conteoMotivos.set(m, (conteoMotivos.get(m) ?? 0) + 1);
+      continue;
+    }
     porCategoria.get(p.categoria)?.push(p);
   }
+
+  console.log("Diagnóstico — por qué se descartan productos (un producto puede sumar en varios):");
+  for (const [motivo, cantidad] of Array.from(conteoMotivos.entries()).sort((a, b) => b[1] - a[1])) {
+    console.log(`  ${motivo}: ${cantidad}`);
+  }
+  console.log();
 
   console.log("Candidatos completos (foto + todos los campos) por categoría:");
   for (const { value: categoria, label } of CATEGORIAS_PRODUCTO) {
