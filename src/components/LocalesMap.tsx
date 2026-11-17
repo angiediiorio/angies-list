@@ -5,6 +5,8 @@ import Link from "next/link";
 import { useMemo, useState, type ReactNode } from "react";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { CATEGORIAS_PRODUCTO, type CategoriaProducto, type Local } from "@/types";
 
 // Un color por categoría, reutilizado en los pines del mapa y en los
@@ -86,7 +88,7 @@ export function LocalesMap({ locales }: { locales: Local[] }) {
         ))}
       </div>
 
-      <div className="h-[60vh] w-full overflow-hidden rounded-2xl border border-black/10 dark:border-white/10">
+      <div className="h-[60vh] w-full overflow-hidden rounded-2xl border border-border">
         <MapContainer center={centro} zoom={10} scrollWheelZoom className="h-full w-full">
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -102,14 +104,14 @@ export function LocalesMap({ locales }: { locales: Local[] }) {
                 <div className="flex flex-col gap-1 text-sm">
                   <span className="font-medium">{local.nombre}</span>
                   {local.direccion && (
-                    <span className="text-zinc-500">
+                    <span className="text-muted-foreground">
                       {local.direccion}
                       {local.ciudad ? `, ${local.ciudad}` : ""}
                     </span>
                   )}
                   <Link
                     href={`/catalogo?categoria=${local.categoria}`}
-                    className="mt-1 font-medium text-zinc-900 underline underline-offset-2"
+                    className="mt-1 font-medium text-foreground underline underline-offset-2"
                   >
                     Ver productos de esta categoría →
                   </Link>
@@ -121,10 +123,10 @@ export function LocalesMap({ locales }: { locales: Local[] }) {
       </div>
 
       {localesFiltrados.length === 0 && (
-        <p className="text-sm text-zinc-500">No hay locales de esa categoría todavía.</p>
+        <p className="text-sm text-muted-foreground">No hay locales de esa categoría todavía.</p>
       )}
       {sinUbicacion > 0 && (
-        <p className="text-xs text-zinc-400">
+        <p className="text-xs text-muted-foreground">
           {sinUbicacion} {sinUbicacion === 1 ? "local" : "locales"} más sin dirección
           cargada (no aparecen en el mapa, pero sí en el catálogo).
         </p>
@@ -145,17 +147,15 @@ function FiltroBoton({
   color?: string;
 }) {
   return (
-    <button
+    <Button
       type="button"
+      size="sm"
+      variant={activo ? "default" : "outline"}
       onClick={onClick}
-      className={`flex items-center gap-2 rounded-full border px-3 py-1.5 text-sm font-medium transition-colors ${
-        activo
-          ? "border-transparent bg-zinc-950 text-white dark:bg-white dark:text-zinc-950"
-          : "border-black/15 text-zinc-700 hover:bg-black/5 dark:border-white/20 dark:text-zinc-300 dark:hover:bg-white/10"
-      }`}
+      className={cn("gap-2", !activo && "bg-card")}
     >
       {color && <span className="h-2 w-2 rounded-full" style={{ backgroundColor: color }} />}
       {children}
-    </button>
+    </Button>
   );
 }

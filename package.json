@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "importar:locales": "tsx scripts/importar-locales.ts",
-    "curar:destacados": "tsx scripts/curar-destacados-demo.ts"
+    "curar:destacados": "tsx scripts/curar-destacados-demo.ts",
+    "geolocalizar:destacados": "tsx scripts/geolocalizar-destacados.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.131.0",

@@ -354,6 +354,27 @@ productos reales sin curar.
    acumulan destacados de corridas viejas). Flag opcional:
    `--cantidad=N` (default 18).
 
+## Ubicar en el mapa los locales destacados
+
+Los locales reales se importan sin dirección (la mayoría son tiendas
+online), así que no aparecían en `/mapa`. `scripts/geolocalizar-destacados.ts`
+busca, solo para los locales detrás de productos `destacado_demo`, si su
+sitio menciona explícitamente una ciudad o dirección (pie de página,
+contacto, "retirás en..."), y si encuentra algo lo geocodifica con
+[Nominatim](https://nominatim.openstreetmap.org) (gratis, 1 request/seg) para
+guardar `direccion`/`ciudad`/`lat`/`lng` en el local. Nunca inventa: un local
+que no mencione ninguna ubicación queda sin coordenadas, igual que antes.
+
+```bash
+npm run geolocalizar:destacados -- --dry-run   # solo loguea qué encontraría
+npm run geolocalizar:destacados                # guarda las coordenadas en Supabase
+```
+
+Mismas variables de entorno que `importar-locales.ts`
+(`ANTHROPIC_API_KEY`, `NEXT_PUBLIC_SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`).
+Es idempotente: si lo corrés de nuevo, salta los locales que ya tienen
+coordenadas.
+
 ## Próximos pasos sugeridos
 
 Ver brief técnico, sección 7: validar con usuarios/locales piloto, cargar

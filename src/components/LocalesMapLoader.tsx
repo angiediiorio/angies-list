@@ -12,7 +12,7 @@ const LocalesMap = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="h-[60vh] w-full animate-pulse rounded-2xl border border-black/10 bg-zinc-100 dark:border-white/10 dark:bg-zinc-900" />
+      <div className="h-[60vh] w-full animate-pulse rounded-2xl border border-border bg-muted" />
     ),
   },
 );
