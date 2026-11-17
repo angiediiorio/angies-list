@@ -322,10 +322,16 @@ imágenes tenga cada sitio. Se puede ver el saldo y el consumo real en
 
 `scripts/curar-destacados-demo.ts` marca `destacado_demo = true` en los
 productos reales que están listos para mostrarse en una demo: tienen foto
-confirmada (no vacía) y todos los campos completos (ningún
-`Sin especificar`/`Consultar` dejado por `importar-locales.ts`), eligiendo
+confirmada (no vacía) y una descripción usable (15+ caracteres) — los dos
+únicos campos donde la mayoría de los sitios chicos sí publica algo. No
+exige material/color/estilo/medidas completos (en la práctica casi ningún
+sitio los lista en su home; quedan como "Sin especificar"/"Consultar" en
+los pocos que entran sin esos datos, que la UI ya soporta), pero sí
+prioriza, dentro de cada categoría, los candidatos que los tengan. Elige
 la mayor diversidad de categorías posible hasta una cantidad objetivo
-(default 18, entre las 15-20 pedidas).
+(default 18, entre las 15-20 pedidas). El script loguea un diagnóstico de
+cuántos productos quedan afuera por cada motivo, y qué campos le faltan a
+cada seleccionado.
 
 El catálogo (`/catalogo` y los "Destacados" de la portada) muestra **por
 defecto solo estos productos curados** — el link "Ver catálogo completo"

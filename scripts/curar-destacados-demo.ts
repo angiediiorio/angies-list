@@ -66,17 +66,28 @@ function nombreLocal(local: CandidatoFila["local"]): string {
   return Array.isArray(local) ? (local[0]?.nombre ?? "?") : local.nombre;
 }
 
-// Devuelve los motivos por los que el producto NO entra en la demo (array
-// vacío = está completo). Separado de un simple boolean para poder armar
-// el diagnóstico de abajo (qué campo es el cuello de botella real).
-function motivosIncompleto(p: CandidatoFila): string[] {
+// Motivos BLOQUEANTES: si el producto tiene alguno, no entra a la demo.
+// Foto real y una descripción usable son los únicos campos donde la
+// mayoría de los sitios sí tiene dato — pedir también material/color/
+// estilo/medidas completos dejaba candidatos en 5 sobre 403, porque casi
+// ningún sitio chico lista esos datos de forma explícita en su home.
+function motivosBloqueantes(p: CandidatoFila): string[] {
   const motivos: string[] = [];
   if (!p.imagenes || p.imagenes.length === 0) motivos.push("sin foto");
+  if (!p.descripcion || p.descripcion.trim().length < 15) motivos.push("sin descripción");
+  return motivos;
+}
+
+// Campos informativos (no bloquean, pero cuentan para el diagnóstico y
+// para ordenar candidatos dentro de una misma categoría): la UI ya
+// muestra "Sin especificar"/"Consultar" cuando faltan, así que un
+// producto sin estilo igual es presentable, solo menos específico.
+function camposFaltantes(p: CandidatoFila): string[] {
+  const motivos: string[] = [];
   if (p.material === PLACEHOLDERS.material) motivos.push("sin material");
   if (p.color === PLACEHOLDERS.color) motivos.push("sin color");
   if (p.estilo === PLACEHOLDERS.estilo) motivos.push("sin estilo");
   if (!p.medidas || p.medidas === PLACEHOLDERS.medidas) motivos.push("sin medidas");
-  if (!p.descripcion || p.descripcion.trim().length < 15) motivos.push("sin descripción");
   return motivos;
 }
 
@@ -131,23 +142,37 @@ async function main() {
   const porCategoria = new Map<CategoriaProducto, CandidatoFila[]>();
   for (const { value: categoria } of CATEGORIAS_PRODUCTO) porCategoria.set(categoria, []);
 
-  const conteoMotivos = new Map<string, number>();
+  const conteoBloqueantes = new Map<string, number>();
+  const conteoInformativos = new Map<string, number>();
   for (const p of todos) {
-    const motivos = motivosIncompleto(p);
-    if (motivos.length > 0) {
-      for (const m of motivos) conteoMotivos.set(m, (conteoMotivos.get(m) ?? 0) + 1);
+    const bloqueantes = motivosBloqueantes(p);
+    for (const m of camposFaltantes(p)) {
+      conteoInformativos.set(m, (conteoInformativos.get(m) ?? 0) + 1);
+    }
+    if (bloqueantes.length > 0) {
+      for (const m of bloqueantes) conteoBloqueantes.set(m, (conteoBloqueantes.get(m) ?? 0) + 1);
       continue;
     }
     porCategoria.get(p.categoria)?.push(p);
   }
 
   console.log("Diagnóstico — por qué se descartan productos (un producto puede sumar en varios):");
-  for (const [motivo, cantidad] of Array.from(conteoMotivos.entries()).sort((a, b) => b[1] - a[1])) {
-    console.log(`  ${motivo}: ${cantidad}`);
+  for (const [motivo, cantidad] of Array.from(conteoBloqueantes.entries()).sort((a, b) => b[1] - a[1])) {
+    console.log(`  ${motivo} (bloqueante): ${cantidad}`);
+  }
+  for (const [motivo, cantidad] of Array.from(conteoInformativos.entries()).sort((a, b) => b[1] - a[1])) {
+    console.log(`  ${motivo} (no bloquea, se muestra "Sin especificar"/"Consultar"): ${cantidad}`);
   }
   console.log();
 
-  console.log("Candidatos completos (foto + todos los campos) por categoría:");
+  // Dentro de cada categoría, los candidatos con más campos informativos
+  // completos van primero — si hay que elegir entre varios, mejor el más
+  // específico.
+  for (const candidatos of porCategoria.values()) {
+    candidatos.sort((a, b) => camposFaltantes(a).length - camposFaltantes(b).length);
+  }
+
+  console.log("Candidatos (foto + descripción) por categoría:");
   for (const { value: categoria, label } of CATEGORIAS_PRODUCTO) {
     console.log(`  ${label}: ${porCategoria.get(categoria)?.length ?? 0}`);
   }
@@ -158,14 +183,16 @@ async function main() {
 
   console.log(`Seleccionados: ${elegidos.length} producto(s), ${categoriasCubiertas.size} categoría(s) cubiertas.\n`);
   for (const p of elegidos) {
-    console.log(`  [${p.categoria}] ${p.nombre} — ${nombreLocal(p.local)}`);
+    const faltan = camposFaltantes(p);
+    const sufijo = faltan.length > 0 ? ` (faltan: ${faltan.join(", ")})` : "";
+    console.log(`  [${p.categoria}] ${p.nombre} — ${nombreLocal(p.local)}${sufijo}`);
   }
 
   if (elegidos.length < 15) {
     console.warn(
-      `\n⚠️  Solo se encontraron ${elegidos.length} productos completos — menos que el mínimo` +
-        " de 15 que pediste para la demo. Puede hacer falta correr más del CSV o relajar qué" +
-        " cuenta como \"completo\" en este script.",
+      `\n⚠️  Solo se encontraron ${elegidos.length} productos con foto + descripción —` +
+        " menos que el mínimo de 15 que pediste para la demo. Puede hacer falta importar más" +
+        " locales (--offset en importar-locales.ts) para sumar más con foto.",
     );
   }
 
