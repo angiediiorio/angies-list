@@ -18,5 +18,5 @@ export interface CatalogoRepository {
   obtenerProductoPorSlug(slug: string): Promise<ProductoConLocal | null>;
   listarRelacionados(ids: string[]): Promise<ProductoConLocal[]>;
   listarLocales(): Promise<Local[]>;
-  obtenerOpcionesFiltro(): Promise<OpcionesFiltro>;
+  obtenerOpcionesFiltro(soloDestacados?: boolean): Promise<OpcionesFiltro>;
 }

@@ -60,6 +60,10 @@ export interface Producto {
   descripcion: string;
   imagenes: string[];
   producto_relacionado_ids: string[];
+  // Curaduría manual para la demo a estudios (ver
+  // scripts/curar-destacados-demo.ts). Opcional porque los datos mock no
+  // lo traen — se tratan como destacados igual (son un set ya curado a mano).
+  destacado_demo?: boolean;
 }
 
 // Producto "enriquecido" con el local ya resuelto — lo que consumen las
@@ -77,6 +81,10 @@ export interface FiltrosCatalogo {
   precioMin?: number;
   precioMax?: number;
   q?: string;
+  // Catálogo curado para la demo a estudios (ver CatalogoPage / "Ver
+  // catálogo completo"). No es un filtro que el visitante arma a mano, por
+  // eso vive separado del resto en vez de como un FiltroSelect más.
+  soloDestacados?: boolean;
 }
 
 // --- B2B: estudios de arquitectura/diseño ---

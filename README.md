@@ -29,6 +29,9 @@ Stack: Next.js (App Router) + TypeScript + Tailwind CSS + Supabase.
 - ✅ **Script de importación de locales reales** (`scripts/importar-locales.ts`):
   scraping + clasificación por IA a partir de un CSV — ver "Importar
   locales reales" más abajo.
+- ✅ **Catálogo curado para demo a estudios** (`destacado_demo`): el
+  catálogo filtra por defecto solo productos con foto + datos completos —
+  ver "Curar catálogo para demo a estudios" más abajo.
 - ⏳ Panel de asesoría y fase 2 completa: ver brief técnico, sección 2.
 
 > **Pivot de modelo de negocio**: el foco pasó a ser B2B-first — suscripciones
@@ -314,6 +317,36 @@ aproximadamente 2-3 centavos de dólar. Para los 167 locales del CSV
 completo, el total ronda **los 3-6 dólares**, variando según cuántas
 imágenes tenga cada sitio. Se puede ver el saldo y el consumo real en
 [console.anthropic.com](https://console.anthropic.com) → Billing.
+
+## Curar catálogo para demo a estudios
+
+`scripts/curar-destacados-demo.ts` marca `destacado_demo = true` en los
+productos reales que están listos para mostrarse en una demo: tienen foto
+confirmada (no vacía) y todos los campos completos (ningún
+`Sin especificar`/`Consultar` dejado por `importar-locales.ts`), eligiendo
+la mayor diversidad de categorías posible hasta una cantidad objetivo
+(default 18, entre las 15-20 pedidas).
+
+El catálogo (`/catalogo` y los "Destacados" de la portada) muestra **por
+defecto solo estos productos curados** — el link "Ver catálogo completo"
+en `/catalogo` (o `/catalogo?todos=1`) saca el filtro y muestra los 400+
+productos reales sin curar.
+
+### Setup
+
+1. Corré `supabase/schema-destacado-demo.sql` en el SQL Editor (agrega la
+   columna `destacado_demo` a `productos`; en un proyecto nuevo ya viene
+   en `schema.sql`, no hace falta este paso).
+2. Corré el script en tu máquina (mismas variables de entorno que
+   `importar-locales.ts`: `NEXT_PUBLIC_SUPABASE_URL` y
+   `SUPABASE_SERVICE_ROLE_KEY` en `.env.local`):
+   ```bash
+   npm run curar:destacados -- --dry-run   # solo loguea qué elegiría
+   npm run curar:destacados                # escribe destacado_demo en Supabase
+   ```
+   Correrlo de nuevo reemplaza la selección anterior por completo (no se
+   acumulan destacados de corridas viejas). Flag opcional:
+   `--cantidad=N` (default 18).
 
 ## Próximos pasos sugeridos
 

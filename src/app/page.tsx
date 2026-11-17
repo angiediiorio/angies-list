@@ -9,11 +9,11 @@ import { CATEGORIAS_PRODUCTO } from "@/types";
 
 export default async function Home() {
   const repositorio = getCatalogoRepository();
-  const [todosLosProductos, usuario] = await Promise.all([
-    repositorio.listarProductos({}),
+  const [productosDestacados, usuario] = await Promise.all([
+    repositorio.listarProductos({ soloDestacados: true }),
     getCurrentUser(),
   ]);
-  const destacados = todosLosProductos.slice(0, 3);
+  const destacados = productosDestacados.slice(0, 3);
   const favoritoIds = usuario ? await getFavoritoIds(usuario.id) : new Set<string>();
 
   return (

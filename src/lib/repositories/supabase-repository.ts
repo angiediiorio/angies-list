@@ -22,6 +22,7 @@ export class SupabaseCatalogoRepository implements CatalogoRepository {
       .from(TABLA_PRODUCTOS)
       .select("*, local:locales(*)");
 
+    if (filtros.soloDestacados) query = query.eq("destacado_demo", true);
     if (filtros.categoria) query = query.eq("categoria", filtros.categoria);
     if (filtros.material) query = query.ilike("material", filtros.material);
     if (filtros.color) query = query.ilike("color", filtros.color);
@@ -74,21 +75,31 @@ export class SupabaseCatalogoRepository implements CatalogoRepository {
     return (data ?? []) as LocalRow[];
   }
 
-  async obtenerOpcionesFiltro(): Promise<OpcionesFiltro> {
+  async obtenerOpcionesFiltro(soloDestacados?: boolean): Promise<OpcionesFiltro> {
     const supabase = await createClient();
-    const [{ data: productos, error: errProductos }, { data: locales, error: errLocales }] =
-      await Promise.all([
-        supabase.from(TABLA_PRODUCTOS).select("material,color,estilo,precio"),
-        supabase.from(TABLA_LOCALES).select("ciudad"),
-      ]);
+    let queryProductos = supabase
+      .from(TABLA_PRODUCTOS)
+      .select("material,color,estilo,precio,local_id");
+    if (soloDestacados) queryProductos = queryProductos.eq("destacado_demo", true);
 
+    const { data: productos, error: errProductos } = await queryProductos;
     if (errProductos) throw errProductos;
-    if (errLocales) throw errLocales;
 
     const filas = (productos ?? []) as Pick<
       ProductoRow,
-      "material" | "color" | "estilo" | "precio"
+      "material" | "color" | "estilo" | "precio" | "local_id"
     >[];
+
+    // Las ciudades salen de `locales`, que no tiene destacado_demo — al
+    // filtrar, se acota a los locales de los productos ya filtrados arriba.
+    let queryLocales = supabase.from(TABLA_LOCALES).select("ciudad");
+    if (soloDestacados) {
+      const localIds = Array.from(new Set(filas.map((p) => p.local_id)));
+      queryLocales = queryLocales.in("id", localIds);
+    }
+    const { data: locales, error: errLocales } = await queryLocales;
+    if (errLocales) throw errLocales;
+
     const ciudadesFilas = (locales ?? []) as Pick<LocalRow, "ciudad">[];
 
     return {

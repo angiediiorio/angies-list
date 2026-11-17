@@ -21,6 +21,11 @@ export class MockCatalogoRepository implements CatalogoRepository {
   async listarProductos(filtros: FiltrosCatalogo): Promise<ProductoConLocal[]> {
     let resultado = mockProductos.map(conLocal);
 
+    if (filtros.soloDestacados) {
+      // Los mock no traen destacado_demo (son un set chico ya curado a
+      // mano) — undefined cuenta como destacado, igual que en producción.
+      resultado = resultado.filter((p) => p.destacado_demo !== false);
+    }
     if (filtros.categoria) {
       resultado = resultado.filter((p) => p.categoria === filtros.categoria);
     }
@@ -78,14 +83,20 @@ export class MockCatalogoRepository implements CatalogoRepository {
     return delay(mockLocales);
   }
 
-  async obtenerOpcionesFiltro(): Promise<OpcionesFiltro> {
+  async obtenerOpcionesFiltro(soloDestacados?: boolean): Promise<OpcionesFiltro> {
+    const productos = soloDestacados
+      ? mockProductos.filter((p) => p.destacado_demo !== false)
+      : mockProductos;
+    const localIds = new Set(productos.map((p) => p.local_id));
+    const locales = mockLocales.filter((l) => localIds.has(l.id));
+
     const ciudades = Array.from(
-      new Set(mockLocales.map((l) => l.ciudad).filter((c): c is string => Boolean(c))),
+      new Set(locales.map((l) => l.ciudad).filter((c): c is string => Boolean(c))),
     ).sort();
-    const materiales = Array.from(new Set(mockProductos.map((p) => p.material))).sort();
-    const colores = Array.from(new Set(mockProductos.map((p) => p.color))).sort();
-    const estilos = Array.from(new Set(mockProductos.map((p) => p.estilo))).sort();
-    const precioMax = Math.max(...mockProductos.map((p) => p.precio));
+    const materiales = Array.from(new Set(productos.map((p) => p.material))).sort();
+    const colores = Array.from(new Set(productos.map((p) => p.color))).sort();
+    const estilos = Array.from(new Set(productos.map((p) => p.estilo))).sort();
+    const precioMax = productos.length ? Math.max(...productos.map((p) => p.precio)) : 0;
 
     return delay({ ciudades, materiales, colores, estilos, precioMax });
   }

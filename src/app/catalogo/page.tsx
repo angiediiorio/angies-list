@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 
 import { CatalogFilters } from "@/components/CatalogFilters";
 import { ProductCard } from "@/components/ProductCard";
@@ -28,7 +29,7 @@ function paramNumber(value: string | string[] | undefined): number | undefined {
   return Number.isFinite(n) ? n : undefined;
 }
 
-function parseFiltros(searchParams: SearchParams): FiltrosCatalogo {
+function parseFiltros(searchParams: SearchParams, soloDestacados: boolean): FiltrosCatalogo {
   return {
     categoria: paramString(searchParams.categoria) as CategoriaProducto | undefined,
     ciudad: paramString(searchParams.ciudad),
@@ -38,7 +39,21 @@ function parseFiltros(searchParams: SearchParams): FiltrosCatalogo {
     precioMin: paramNumber(searchParams.precioMin),
     precioMax: paramNumber(searchParams.precioMax),
     q: paramString(searchParams.q),
+    soloDestacados,
   };
+}
+
+// Toggle "ver catálogo completo" sin perder el resto de los filtros
+// aplicados — arma la misma URL con el único parámetro ?todos cambiado.
+function hrefConToggleTodos(searchParams: SearchParams, mostrarTodos: boolean): string {
+  const params = new URLSearchParams();
+  for (const [key, value] of Object.entries(searchParams)) {
+    if (key === "todos" || value === undefined) continue;
+    for (const v of Array.isArray(value) ? value : [value]) params.append(key, v);
+  }
+  if (mostrarTodos) params.set("todos", "1");
+  const qs = params.toString();
+  return qs ? `/catalogo?${qs}` : "/catalogo";
 }
 
 export default async function CatalogoPage({
@@ -47,12 +62,13 @@ export default async function CatalogoPage({
   searchParams: Promise<SearchParams>;
 }) {
   const resolvedSearchParams = await searchParams;
-  const filtros = parseFiltros(resolvedSearchParams);
+  const mostrarTodos = paramString(resolvedSearchParams.todos) === "1";
+  const filtros = parseFiltros(resolvedSearchParams, !mostrarTodos);
   const repositorio = getCatalogoRepository();
 
   const [productos, opciones, usuario] = await Promise.all([
     repositorio.listarProductos(filtros),
-    repositorio.obtenerOpcionesFiltro(),
+    repositorio.obtenerOpcionesFiltro(!mostrarTodos),
     getCurrentUser(),
   ]);
   const favoritoIds = usuario ? await getFavoritoIds(usuario.id) : new Set<string>();
@@ -64,6 +80,29 @@ export default async function CatalogoPage({
         <p className="text-zinc-600 dark:text-zinc-400">
           {productos.length}{" "}
           {productos.length === 1 ? "producto encontrado" : "productos encontrados"}
+        </p>
+        <p className="text-sm text-zinc-500 dark:text-zinc-400">
+          {mostrarTodos ? (
+            <>
+              Mostrando el catálogo completo, sin curar.{" "}
+              <Link
+                href={hrefConToggleTodos(resolvedSearchParams, false)}
+                className="font-medium underline underline-offset-2 hover:text-zinc-950 dark:hover:text-white"
+              >
+                Ver solo destacados
+              </Link>
+            </>
+          ) : (
+            <>
+              Mostrando la selección curada para la demo.{" "}
+              <Link
+                href={hrefConToggleTodos(resolvedSearchParams, true)}
+                className="font-medium underline underline-offset-2 hover:text-zinc-950 dark:hover:text-white"
+              >
+                Ver catálogo completo
+              </Link>
+            </>
+          )}
         </p>
       </div>
 

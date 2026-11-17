@@ -49,12 +49,18 @@ create table if not exists productos (
   descripcion text,
   imagenes text[] not null default '{}',
   producto_relacionado_ids uuid[] not null default '{}',
+  -- Curaduría manual para la demo a estudios: true solo en los productos
+  -- con foto confirmada y todos los campos completos (ver
+  -- scripts/curar-destacados-demo.ts). El catálogo filtra por esto por
+  -- defecto, mostrando el completo solo con ?todos=1.
+  destacado_demo boolean not null default false,
   created_at timestamptz not null default now()
 );
 
 create index if not exists productos_categoria_idx on productos (categoria);
 create index if not exists productos_local_id_idx on productos (local_id);
 create index if not exists productos_precio_idx on productos (precio);
+create index if not exists productos_destacado_demo_idx on productos (destacado_demo) where destacado_demo;
 
 -- Fase 2 (pospuesto, ver brief sección 2): favoritos, tracking de clics y
 -- asesoría. Se dejan creadas para no romper el modelo cuando se activen.
