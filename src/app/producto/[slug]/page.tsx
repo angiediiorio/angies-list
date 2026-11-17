@@ -126,7 +126,7 @@ export default async function ProductoPage({ params }: ProductoPageProps) {
             <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
               Detalles
             </p>
-            <dl className="mt-2 divide-y divide-border rounded-2xl border border-border bg-card">
+            <dl className="mt-2 divide-y divide-border border-t border-border">
               <SpecRow label="Material" valor={producto.material} />
               <SpecRow label="Color" valor={producto.color} />
               <SpecRow label="Estilo" valor={producto.estilo} />
@@ -181,7 +181,7 @@ export default async function ProductoPage({ params }: ProductoPageProps) {
 
 function SpecRow({ label, valor }: { label: string; valor: string }) {
   return (
-    <div className="flex items-center justify-between gap-6 px-4 py-3 text-sm">
+    <div className="flex items-center justify-between gap-6 py-3 text-sm">
       <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
         {label}
       </dt>
